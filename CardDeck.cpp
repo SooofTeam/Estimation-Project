@@ -20,6 +20,21 @@ vector < pair<string, int>> CardDeck::Cards()
 	return Cards;
 
 }
+
+void CardDeck::Distribute(vector < vector < pair<string, int>>> &Players, vector < pair<string, int>> DeckOfCards)
+{
+	int c = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		int b = 0;
+		for (int j = c; b < 13; j++, b++)
+		{
+			Players[i].push_back(DeckOfCards[j]);
+		}
+		c += 13;
+	}
+}
+
 CardDeck::~CardDeck()
 {
 }
