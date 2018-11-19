@@ -92,7 +92,7 @@ void GUI::PlayerCardsSetup(vector < pair<string, int>> Players, interactiveButto
 			Card[j].normal = Diamonds[Players[j].second];
 			Card[j].shape.setPosition(1600, 1000);
 			Card[j].TypeAndValue.first = "Diamonds";
-			Card[j].TypeAndValue.second = Players[3].second;
+			Card[j].TypeAndValue.second = Players[j].second;
 		}
 		else if (Players[j].first == "Clubs")
 		{
