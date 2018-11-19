@@ -1,10 +1,5 @@
 #pragma once
-#include <iostream>
-#include <string>
-#include <vector>
-#include <algorithm>
-#include <queue>
-#include <functional>
+#include "Includes.h"
 using namespace std;
 class AiPlayer
 {
