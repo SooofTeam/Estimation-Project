@@ -5,8 +5,8 @@ class CardDeck
 	
 public:
 	CardDeck();
-	vector < pair<string, int>> Cards();
-	void Distribute(vector < vector < pair<string, int>>> &Players, vector < pair<string, int>> DeckOfCards);
+	vector < pair<int, string>> Cards();
+	void Distribute(vector < vector < pair<int, string>>> &Players, vector < pair<int,string>> DeckOfCards);
 	~CardDeck();
 };
 
