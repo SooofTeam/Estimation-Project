@@ -147,6 +147,8 @@ pair<int, string> AiPlayer::MainCall(pair<int ,string> &Bidcall, vector < pair<i
 				counter += 2;
 			else if (i[0] == 14)
 				counter++;
+			else if (i[0] == 13)
+				counter++;
 		}
 		else if (i.size() == 1)
 		{
