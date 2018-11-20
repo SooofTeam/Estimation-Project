@@ -6,7 +6,10 @@ class AiPlayer
 	
 public:
 	AiPlayer();
-	pair<int, string> Bid(vector < pair<string, int>> pc);
+	pair<int, string> BidCall(vector < pair<int, string>> pc);
+	pair<int, string> MainCall(pair<int, string> &Bidcall, vector < pair<int, string>> &pc);
+
+
 	~AiPlayer();
 };
 
