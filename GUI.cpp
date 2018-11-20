@@ -18,9 +18,9 @@ void GUI::SetTextures(Texture Spades[15], Texture Hearts[15], Texture Diamonds[1
 	Spades[8].loadFromFile("CardsTextures/8_of_spades.jpg");
 	Spades[9].loadFromFile("CardsTextures/9_of_spades.jpg");
 	Spades[10].loadFromFile("CardsTextures/10_of_spades.jpg");
-	Spades[11].loadFromFile("CardsTextures/jack_of_spades.jpg");
-	Spades[12].loadFromFile("CardsTextures/queen_of_spades.jpg");
-	Spades[13].loadFromFile("CardsTextures/king_of_spades.jpg");
+	Spades[11].loadFromFile("CardsTextures/jack_of_spades2.jpg");
+	Spades[12].loadFromFile("CardsTextures/queen_of_spades2.jpg");
+	Spades[13].loadFromFile("CardsTextures/king_of_spades2.jpg");
 	Spades[14].loadFromFile("CardsTextures/ace_of_spades.jpg");
 	///////////////////////Hearts Textures//////////////////////
 	Hearts[2].loadFromFile("CardsTextures/2_of_hearts.jpg");
@@ -32,10 +32,10 @@ void GUI::SetTextures(Texture Spades[15], Texture Hearts[15], Texture Diamonds[1
 	Hearts[8].loadFromFile("CardsTextures/8_of_hearts.jpg");
 	Hearts[9].loadFromFile("CardsTextures/9_of_hearts.jpg");
 	Hearts[10].loadFromFile("CardsTextures/10_of_hearts.jpg");
-	Hearts[11].loadFromFile("CardsTextures/jack_of_hearts.jpg");
-	Hearts[12].loadFromFile("CardsTextures/queen_of_hearts.jpg");
-	Hearts[13].loadFromFile("CardsTextures/king_of_hearts.jpg");
-	Hearts[14].loadFromFile("CardsTextures/queen_of_hearts.jpg");
+	Hearts[11].loadFromFile("CardsTextures/jack_of_hearts2.jpg");
+	Hearts[12].loadFromFile("CardsTextures/queen_of_hearts2.jpg");
+	Hearts[13].loadFromFile("CardsTextures/king_of_hearts2.jpg");
+	Hearts[14].loadFromFile("CardsTextures/ace_of_hearts.jpg");
 	//////////////////////Diamonds Textures/////////////////////
 	Diamonds[2].loadFromFile("CardsTextures/2_of_diamonds.jpg");
 	Diamonds[3].loadFromFile("CardsTextures/3_of_diamonds.jpg");
@@ -46,9 +46,9 @@ void GUI::SetTextures(Texture Spades[15], Texture Hearts[15], Texture Diamonds[1
 	Diamonds[8].loadFromFile("CardsTextures/8_of_diamonds.jpg");
 	Diamonds[9].loadFromFile("CardsTextures/9_of_diamonds.jpg");
 	Diamonds[10].loadFromFile("CardsTextures/10_of_diamonds.jpg");
-	Diamonds[11].loadFromFile("CardsTextures/jack_of_diamonds.jpg");
-	Diamonds[12].loadFromFile("CardsTextures/queen_of_diamonds.jpg");
-	Diamonds[13].loadFromFile("CardsTextures/king_of_diamonds.jpg");
+	Diamonds[11].loadFromFile("CardsTextures/jack_of_diamonds2.jpg");
+	Diamonds[12].loadFromFile("CardsTextures/queen_of_diamonds2.jpg");
+	Diamonds[13].loadFromFile("CardsTextures/king_of_diamonds2.jpg");
 	Diamonds[14].loadFromFile("CardsTextures/ace_of_diamonds.jpg");
 	//////////////////////////Clubs Textures/////////////////////////
 	Clubs[2].loadFromFile("CardsTextures/2_of_clubs.jpg");
@@ -60,57 +60,70 @@ void GUI::SetTextures(Texture Spades[15], Texture Hearts[15], Texture Diamonds[1
 	Clubs[8].loadFromFile("CardsTextures/8_of_clubs.jpg");
 	Clubs[9].loadFromFile("CardsTextures/9_of_clubs.jpg");
 	Clubs[10].loadFromFile("CardsTextures/10_of_clubs.jpg");
-	Clubs[11].loadFromFile("CardsTextures/jack_of_clubs.jpg");
-	Clubs[12].loadFromFile("CardsTextures/queen_of_clubs.jpg");
-	Clubs[13].loadFromFile("CardsTextures/king_of_clubs.jpg");
+	Clubs[11].loadFromFile("CardsTextures/jack_of_clubs2.jpg");
+	Clubs[12].loadFromFile("CardsTextures/queen_of_clubs2.jpg");
+	Clubs[13].loadFromFile("CardsTextures/king_of_clubs2.jpg");
 	Clubs[14].loadFromFile("CardsTextures/ace_of_clubs.jpg");
 	///////////////////////////////////////////////////////////////
 	Background.loadFromFile("CardsTextures/BackGround.jpg");
 }
-void GUI::PlayerCardsSetup(vector < pair<string, int>> Players, interactiveButton Card[14], Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15])
+void GUI::PlayerCardsSetup(vector < pair<int, string>> Players, interactiveButton Card[14], Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15])
 {
 	int j = 0;
 	while (j != 13)
 	{
-		if (Players[j].first == "Spades")
+		if (Players[j].second == "Spades")
 		{
-			Card[j].normal = Spades[Players[j].second];
-			Card[j].shape.setPosition(1600, 1000);
+			Card[j].normal = Spades[Players[j].first];
+			Card[j].shape.setPosition(1580, 1000);
 			Card[j].TypeAndValue.first = "Spades";
-			Card[j].TypeAndValue.second = Players[j].second;
+			Card[j].TypeAndValue.second = Players[j].first;
 		}
-		else if (Players[j].first == "Hearts")
+		else if (Players[j].second == "Hearts")
 		{
-			Card[j].normal = Hearts[Players[j].second];
-			Card[j].shape.setPosition(1600, 1000);
+			Card[j].normal = Hearts[Players[j].first];
+			Card[j].shape.setPosition(1580, 1000);
 			Card[j].TypeAndValue.first = "Hearts";
-			Card[j].TypeAndValue.second = Players[j].second;
+			Card[j].TypeAndValue.second = Players[j].first;
 
 		}
-		else if (Players[j].first == "Diamonds")
+		else if (Players[j].second == "Diamonds")
 		{
-			Card[j].normal = Diamonds[Players[j].second];
-			Card[j].shape.setPosition(1600, 1000);
+			Card[j].normal = Diamonds[Players[j].first];
+			Card[j].shape.setPosition(1580, 1000);
 			Card[j].TypeAndValue.first = "Diamonds";
-			Card[j].TypeAndValue.second = Players[j].second;
+			Card[j].TypeAndValue.second = Players[j].first;
 		}
-		else if (Players[j].first == "Clubs")
+		else if (Players[j].second == "EClubs")
 		{
-			Card[j].normal = Clubs[Players[j].second];
-			Card[j].shape.setPosition(1600, 1000);
-			Card[j].TypeAndValue.first = "Clubs";
-			Card[j].TypeAndValue.second = Players[j].second;
+			Card[j].normal = Clubs[Players[j].first];
+			Card[j].shape.setPosition(1580, 1000);
+			Card[j].TypeAndValue.first = "EClubs";
+			Card[j].TypeAndValue.second = Players[j].first;
 		}
 		normalize(Card[j]);
 		j++;
 	}
 }
-void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], Sprite BackGround)
+void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], Sprite BackGround,interactiveButton RoundDone)
 {
+	interactiveButton tmp;
+	tmp.shape.setSize(Vector2f(25, 25));
+	RoundDone.shape.setSize(Vector2f(75,108));
+	RoundDone.shape.setPosition(Vector2f(550, 268));
+	RoundDone.shape.setFillColor(Color::Red);
+	RectButtonAssign(RoundDone);
+	RoundDone.shape.rotate(180.0f);
+	bool firstround = false;
+	stack<interactiveButton>LastRound;
+	stack<interactiveButton>OnGround;
+	LastRound.push(tmp);
+	OnGround.push(tmp);
 	for (int i = 0; i < 13; i++)
 		{
 		Card[i].shape.setSize(Vector2f(75, 108));
 		}
+
 	float factor = 75;
 	int i = 0;
 	int h = 0;
@@ -136,15 +149,11 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], Sprite Bac
 		{
 			if (Card[i].shape.getPosition().y >= destination.y)
 			{
-				cout << "lesa";
 				Card[i].shape.rotate(180.0f);
 				Card[i].shape.move(-500, -170);
 			}
 			else
 			{
-				cout << "tmam" << " ";
-				cout << destination.x << " ";
-				cout << i << endl;
 				i++;
 				Card[i].shape.move(factor, 0);
 				factor += 75;
@@ -166,26 +175,46 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], Sprite Bac
 		for (int p = 0; p<13; p++)
 			if (ibuttonAutoHover(Card[p], window))
 			{
-				cout << Card[p].TypeAndValue.first << " " << Card[p].TypeAndValue.second << endl;
 				check[p] = 1;
+				OnGround.push(Card[p]);
+				Card[p].Reset();
 				hang();
 			}
 
-
-
+		if (ibuttonAutoHover(RoundDone,window))
+		{
+			for (int p = 0; p < 13; p++)
+			{
+				if (check[p]==1)
+				{
+					OnGround.top().shape.setPosition(979, 181);
+					RectButtonAssign(OnGround.top());
+					LastRound.push(OnGround.top());
+					check[p] = 2;
+				}
+			}
+		}
 
 		window.clear();
 		window.draw(BackGround);
+		window.draw(RoundDone.shape);
 		for (int i = 0; i < 13; i++)
 		{
-			if (check[i] != 1)
-				window.draw(Card[i].shape);
-			else
+			if (check[i] == 0)
 			{
-				Card[i].shape.setPosition(487, 268);
-				RectButtonAssign(Card[i]);
 				window.draw(Card[i].shape);
 			}
+			else if (check[i] == 1)
+			{
+				OnGround.top().shape.setPosition(487, 268);
+				RectButtonAssign(OnGround.top());
+				window.draw(OnGround.top().shape);
+			 }
+			else if (check[i] == 2)
+			{
+				window.draw(LastRound.top().shape);
+			}
+
 		}
 
 		window.display();
