@@ -80,7 +80,7 @@ pair<int, string> AiPlayer::BidCall(vector < pair<int,string>> pc)
 		else if (c == 2)
 			a = "Diamonds";
 		else
-			a = "EClubs";
+			a = "Clubs";
 
 		Counter.push_back({ asc.size(),a });
 		c++;
@@ -88,15 +88,17 @@ pair<int, string> AiPlayer::BidCall(vector < pair<int,string>> pc)
 
 	sort(Counter.begin(), Counter.end());
 
-
+	
 	return Counter.back();
 }
-pair<int, string> AiPlayer::MainCall(pair<int ,string> &Bidcall, vector < pair<int, string>> &pc)
+pair<int, string> AiPlayer::MainCall(pair<int ,string> &Bidcall,vector < pair<int, string>> &pc)
 {
 	vector<int>comp;
 	int Counter=0;
 
 	vector <vector <int>> Shapes(4);
+	if (Bidcall.second == "Clubs")
+		Bidcall.second = "EClubs";
 
 	for (auto i : pc) 
 	{
@@ -161,7 +163,11 @@ pair<int, string> AiPlayer::MainCall(pair<int ,string> &Bidcall, vector < pair<i
 	pair<int, string> Call;
 	Call.first = Counter+Bidcall.first;
 	Call.second = Bidcall.second;
+	if (Call.second == "EClubs")
+		Call.second = "Clubs";
 	return Call;
+	
+
 
 
 }
