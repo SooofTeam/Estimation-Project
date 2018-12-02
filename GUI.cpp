@@ -106,9 +106,9 @@ void GUI::PlayerCardsSetup(vector < pair<int, string>> Players, interactiveButto
 		j++;
 	}
 }
-void GUI::GameDesignSetUp(Texture &avatar1,Sprite &Avatar1, Texture &avatar2, Sprite &Avatar2, Texture &avatar3, Sprite &Avatar3, Texture &SHDC, Sprite &shdc, Texture &CallingWindow, Sprite &callingwindow, interactiveButton CallNumber[14], interactiveButton CallColor[4],interactiveButton Choice[2])
+void GUI::GameDesignSetUp(Texture &avatar1,Sprite &Avatar1, Texture &avatar2, Sprite &Avatar2, Texture &avatar3, Sprite &Avatar3, Texture &SHDC, Sprite &shdc, Texture &CallingWindow, Sprite &callingwindow, Sprite &callingwindow2, interactiveButton CallNumber[14], interactiveButton CallColor[4],interactiveButton Choice[2])
 {
-	int factor=330;
+	int factor=12;
 	avatar1.loadFromFile("CardsTextures/Avatar1.jpg");
 	Avatar1.setTexture(avatar1);
 
@@ -123,6 +123,7 @@ void GUI::GameDesignSetUp(Texture &avatar1,Sprite &Avatar1, Texture &avatar2, Sp
 
 	CallingWindow.loadFromFile("CardsTextures/CallingWindow.jpg");
 	callingwindow.setTexture(CallingWindow);
+	callingwindow2.setTexture(CallingWindow);
 
 	CallNumber[0].normal.loadFromFile("CardsTextures/0.jpg");
 	CallNumber[1].normal.loadFromFile("CardsTextures/1.jpg");
@@ -172,24 +173,24 @@ void GUI::GameDesignSetUp(Texture &avatar1,Sprite &Avatar1, Texture &avatar2, Sp
 		normalize(Choice[i]);
 		Choice[i].shape.setSize(Vector2f(100.0f, 29.0f));
 		if(i==0)
-			Choice[i].shape.setPosition(330, 400);
+			Choice[i].shape.setPosition(12, 270.0f);
 		else if(i==1)
-			Choice[i].shape.setPosition(600, 400);
+			Choice[i].shape.setPosition(300, 270.0f);
 		RectButtonAssign(Choice[i]);
 		Choice[i].TypeAndValue.second = i;
 	}
-	factor = 290;
+	factor = 12;
 	for (int i = 0; i <= 6; i++)
 	{
 		normalize(CallNumber[i]);
 		CallNumber[i].shape.setSize(Vector2f(67.0f, 50.0f));
-		CallNumber[i].shape.setPosition(factor, 220);
+		CallNumber[i].shape.setPosition(factor, 100.0f);
 		RectButtonAssign(CallNumber[i]);
 		CallNumber[i].TypeAndValue.second = i;
 		factor += 67;
 	}
 
-	factor = 290;
+	factor = 12;
 	
 	for (int i = 7; i <= 13; i++)
 	{
@@ -197,7 +198,7 @@ void GUI::GameDesignSetUp(Texture &avatar1,Sprite &Avatar1, Texture &avatar2, Sp
 		{
 		normalize(CallNumber[i]);
 		CallNumber[i].shape.setSize(Vector2f(67.0f, 50.0f));
-		CallNumber[i].shape.setPosition(factor, 285);
+		CallNumber[i].shape.setPosition(factor, 155.0f);
 		RectButtonAssign(CallNumber[i]);
 		CallNumber[i].TypeAndValue.second = i;
 		factor += 67;
@@ -206,20 +207,20 @@ void GUI::GameDesignSetUp(Texture &avatar1,Sprite &Avatar1, Texture &avatar2, Sp
 		{
 			normalize(CallNumber[i]);
 			CallNumber[i].shape.setSize(Vector2f(67.0f, 50.0f));
-			CallNumber[i].shape.setPosition(factor, 285);
+			CallNumber[i].shape.setPosition(factor, 155.0f);
 			RectButtonAssign(CallNumber[i]);
 			CallNumber[i].TypeAndValue.second = i;
 			factor += 67;
 		}
 	}
 
-	factor = 290;
+	factor = 12;
 	
 	for (int i = 0; i <= 3; i++)
 	{
 		normalize(CallColor[i]);
 		CallColor[i].shape.setSize(Vector2f(67.0f, 50.0f));
-		CallColor[i].shape.setPosition(factor, 335);
+		CallColor[i].shape.setPosition(factor, 210.0f);
 		RectButtonAssign(CallColor[i]);
 		CallColor[i].TypeAndValue.second = i;
 		factor += 112.5;
@@ -232,12 +233,58 @@ void GUI::GameDesignSetUp(Texture &avatar1,Sprite &Avatar1, Texture &avatar2, Sp
 	Avatar3.setPosition(817, 230);
 	shdc.setPosition(480, 230);
 	callingwindow.setPosition(275, 125);
+	callingwindow2.setPosition(275, 125);
 
 
 }
-void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], Sprite BackGround,interactiveButton RoundDone,Sprite CardsHolder, vector<pair<int, string >> &Bids)
+
+ string GUI::TrumpDes(vector<pair<int, string>> Bids,int &Caller,pair<int,string>UserBid)
+{
+	 pair<int,string> max = Bids[0];
+		Caller = 0;
+	 for (int  i = 1; i < 3; i++)
+	 {
+		 if (Bids[i].first > max.first)
+		 {
+			 Caller = i;
+			 max = Bids[i];
+		 }
+		 else if (Bids[i].first == max.first)
+		 {
+			 if (Bids[i].second > max.second)
+			 {
+				 Caller = i;
+				 max = Bids[i];
+			 }
+		 }
+	 }
+
+	 if (UserBid.first > max.first)
+	 {
+		 Caller = 3;
+		 max = UserBid;
+	 }
+
+
+	 return max.second;
+}
+
+
+
+
+void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], Sprite BackGround,interactiveButton RoundDone,Sprite CardsHolder, vector<pair<int, string >> &Bids, vector < vector < pair<int, string>>> Players )
 {
 
+	AiPlayer Ai;
+	CardDeck Deck;
+	vector <pair<int, string>> CardsOnGround;
+	vector<vector<pair<int, int>>> Halemm(4);
+	int KolElLammat[4] = {};
+	memset(KolElLammat, 0, 4);
+	string status;
+
+	int TotalLammat = 0;
+	string Trump;
 	pair<int, string> UserBid;
 
 	interactiveButton CallNumber[14];
@@ -254,8 +301,9 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], Sprite Bac
 	Sprite shdc;
 	Texture CallingWindow;
 	Sprite callingwindow;
+	Sprite callingwindow2;
 
-	GameDesignSetUp(avatar1, Avatar1, avatar2, Avatar2, avatar3, Avatar3, SHDC, shdc, CallingWindow,callingwindow,CallNumber,CallColor,Choice);
+	GameDesignSetUp(avatar1, Avatar1, avatar2, Avatar2, avatar3, Avatar3, SHDC, shdc, CallingWindow,callingwindow,callingwindow2,CallNumber,CallColor,Choice);
 
 	Text text;
 	Font font;
@@ -284,6 +332,8 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], Sprite Bac
 	bool roundstarted = true;
 	int i = 0, i2=0;
 	int h = 0;
+	bool finalcall = false;
+	bool usertturn = false;
 	Vector2f destination = Vector2f(1000, 550);
 	
 	string mode = "in_game";
@@ -323,14 +373,11 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], Sprite Bac
 			}
 		}
 
-			if (roundstarted)
+			if (roundstarted && i==13)
 			{
 				mode = "UserCalling";
 			}
-			else
-			{
-				mode = "in_game";
-			}
+			
 
 		if (h != 1 && i == 13&& !roundstarted)
 		{
@@ -376,80 +423,268 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], Sprite Bac
 		
 		if (mode == "UserCalling")
 		{
+			RenderWindow CallingWindow1(VideoMode(502,325), "Estimation" , Style::Close | Style::Resize);
+			//here
+			callingwindow.setPosition(0, 0);
+			text.setPosition(9, 53);
+		while (CallingWindow1.isOpen())
+		{
 
-			for (int c = 0; c <= 13; c++)
+			Event E;
+			while (window.pollEvent(E))
 			{
-				if (ibuttonAutoHover(CallNumber[c], window))
+				switch (E.type)
 				{
-					memset(checkCallNumber, 0, 14);
-					checkCallNumber[c] = 1;
-				}
-			}
-			for (int c = 0; c <= 13; c++)
-			{
-				if (checkCallNumber[c])
-				{
-				CallNumber[c].shape.setTexture(&CallNumber[c].clicked);
-					UserBid.first = CallNumber[c].TypeAndValue.second;
-
-				}
-			}
-
-
-			for (int c = 0; c <= 3; c++)
-			{
-				if (ibuttonAutoHover(CallColor[c], window))
-				{
-					memset(checkCallColor, 0, 4);
-					checkCallColor[c] = 1;
-				}
-			}
-			for (int c = 0; c <= 3; c++)
-			{
-				if (checkCallColor[c])
-				{
-					CallColor[c].shape.setTexture(&CallColor[c].clicked);
-
-					if (CallColor[c].TypeAndValue.second == 0)
-						UserBid.second = "Spades";
-					else if (CallColor[c].TypeAndValue.second == 1)
-						UserBid.second = "Hearts";
-					else if (CallColor[c].TypeAndValue.second == 2)
-						UserBid.second = "Diamonds";
-					else if (CallColor[c].TypeAndValue.second == 3)
-						UserBid.second = "Clubs";
+				case Event::Closed:
+					window.close();
+					break;
+				default:
+					break;
 				}
 			}
 
-			for (int c = 0; c <= 1; c++)
-			{
-				if (ibuttonAutoHover(Choice[c], window))
+			
+
+				for (int c = 0; c <= 13; c++)
 				{
-					if (Choice[c].TypeAndValue.second)
+					if (ibuttonAutoHover(CallNumber[c], CallingWindow1))
 					{
-						roundstarted = false;
+						memset(checkCallNumber, 0, 14);
+						checkCallNumber[c] = 1;
 					}
-					else
+				}
+				for (int c = 0; c <= 13; c++)
+				{
+					if (checkCallNumber[c])
 					{
-						UserBid.first = 0;
-						UserBid.second = "0";
-						roundstarted = false;
-					}
+					CallNumber[c].shape.setTexture(&CallNumber[c].clicked);
+						UserBid.first = CallNumber[c].TypeAndValue.second;
 
-		Bids.push_back(UserBid);
-		sort(Bids.rbegin(), Bids.rend());
-					
+					}
+				}
+
+
+				for (int c = 0; c <= 3; c++)
+				{
+					if (ibuttonAutoHover(CallColor[c], CallingWindow1))
+					{
+						memset(checkCallColor, 0, 4);
+						checkCallColor[c] = 1;
+					}
+				}
+				for (int c = 0; c <= 3; c++)
+				{
+					if (checkCallColor[c])
+					{
+						CallColor[c].shape.setTexture(&CallColor[c].clicked);
+
+						if (CallColor[c].TypeAndValue.second == 0)
+							UserBid.second = "Spades";
+						else if (CallColor[c].TypeAndValue.second == 1)
+							UserBid.second = "Hearts";
+						else if (CallColor[c].TypeAndValue.second == 2)
+							UserBid.second = "Diamonds";
+						else if (CallColor[c].TypeAndValue.second == 3)
+							UserBid.second = "EClubs";
+					}
+				}
+
+				for (int c = 0; c <= 1; c++)
+				{
+					if (ibuttonAutoHover(Choice[c], CallingWindow1))
+					{
+						if (Choice[c].TypeAndValue.second)
+						{
+							mode = "BeforeFinalCalling";
+							Bids.push_back(UserBid);
+							Trump = TrumpDes(Bids, Caller, UserBid);
+							CallingWindow1.close();
+							roundstarted = false;
+						}
+						else
+						{
+							UserBid.first = 0;
+							UserBid.second = "0";
+							mode = "BeforeFinalCalling";
+							Bids.push_back(UserBid);
+							Trump = TrumpDes(Bids, Caller, UserBid);
+							CallingWindow1.close();
+							roundstarted = false;
+
+						}
+					}
+				}
+
+
+
+		CallingWindow1.clear();
+		CallingWindow1.draw(callingwindow);
+		CallingWindow1.draw(text);
+		for (int c = 0; c <= 13; c++)
+		{
+			CallingWindow1.draw(CallNumber[c].shape);
+		}
+		for (int c = 0; c <= 3; c++)
+		{
+			CallingWindow1.draw(CallColor[c].shape);
+		}
+		for (int c = 0; c <= 1; c++)
+		{
+			CallingWindow1.draw(Choice[c].shape);
+		}
+
+		CallingWindow1.display();
+
+			}
+		}
+
+
+		if (mode == "BeforeFinalCalling")
+		{
+			int v;
+			if (Trump == "Spades")v = 0;
+			if (Trump == "Hearts")v = 1;
+			if (Trump == "Diamonds")v = 2;
+			if (Trump == "EClubs")v = 3;
+
+
+				normalize(CallNumber[UserBid.first]);
+			for (int x = 0; x < 4; x++)
+			{
+				if (CallColor[x].TypeAndValue.second == v)
+				{
+					CallColor[v].shape.setTexture(&CallColor[v].clicked);
+				}
+				else
+				{
+					CallColor[x].Reset();
+					CallColor[x].shape.setSize(Vector2f(0, 0));
 				}
 			}
+			Choice[0].Reset();
+			Choice[0].shape.setSize(Vector2f(0, 0));
+			text.setString("Choose your Finall Call , Trump is : " + Trump);
+			mode = "FinalCalling";
 
 		}
-		if (!roundstarted && !i2)
-		{
-			for (auto n:Bids)
+		
+			if (mode == "FinalCalling")
 			{
-				cout << n.first << " " << n.second << endl;
+
+
+				RenderWindow CallingWindow2(VideoMode(502, 325), "Estimation", Style::Close | Style::Resize);
+
+
+
+		for (int c=0,b=Caller;c<4;c++)
+		{
+			int temp = 0;
+			if (b == 3)//User Final Call
+			{
+				while (CallingWindow2.isOpen())
+				{
+
+					Event E;
+					while (window.pollEvent(E))
+					{
+						switch (E.type)
+						{
+						case Event::Closed:
+							window.close();
+							break;
+						default:
+							break;
+						}
+					}
+
+
+					for (int c = 0; c <= 13; c++)
+					{
+						if (ibuttonAutoHover(CallNumber[c], CallingWindow2))
+						{
+							finalcall = true;
+							memset(checkCallNumber, 0, 14);
+							checkCallNumber[c] = 1;
+						}
+					}
+
+					for (int c = 0; c <= 13; c++)
+					{
+						if (checkCallNumber[c])
+						{
+							CallNumber[c].shape.setTexture(&CallNumber[c].clicked);
+							UserBid.first = CallNumber[c].TypeAndValue.second;
+
+						}
+					}
+			
+						if (ibuttonAutoHover(Choice[1], CallingWindow2) && finalcall)
+						{
+							TotalLammat += UserBid.first;
+							b = (b + 1) % 4;
+							CallingWindow2.close();
+							mode = "Playing";
+							break;
+						}
+
+						CallingWindow2.clear();
+						CallingWindow2.draw(callingwindow);
+						CallingWindow2.draw(text);
+						for (int c = 0; c <= 13; c++)
+						{
+							CallingWindow2.draw(CallNumber[c].shape);
+						}
+
+						for (int c = 0; c <= 3; c++)
+						{
+							CallingWindow2.draw(CallColor[c].shape);
+						}
+
+						CallingWindow2.draw(Choice[1].shape);
+
+						CallingWindow2.display();
+
+				}
+				cout << UserBid.first<<" "<<Trump<< endl;
+				continue;
 			}
-			i2++;
+			if (c == 3 )
+			{
+				
+			temp = Ai.FinalCall(Trump,Players[b], -1, TotalLammat,Halemm[b]);
+			TotalLammat += temp;
+
+			cout << temp << " " << Trump << endl;
+
+			if(finalcall)
+			mode = "Playing";
+							
+			(TotalLammat > 13) ? status = "Over" : status = "Under";
+
+			break;
+			}
+			
+			temp = Ai.FinalCall(Trump, Players[b], b, TotalLammat,Halemm[b]);
+			
+			cout << temp << " " << Trump << endl;
+			TotalLammat += temp;
+
+			b =(b+ 1) % 4;
+		}
+
+		
+		}
+
+		
+		
+		if (mode == "Playing")
+		{
+			
+			pair<int, string> ground;
+			int Lammat=0,FinalCall=0;
+			Ai.CardDes(Deck.Cards(), ground, Trump, Players[0], status, Lammat, FinalCall);
+
+
 		}
 
 
@@ -467,7 +702,8 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], Sprite Bac
 				window.draw(Card[i].shape);
 			
 		}
-		if (mode == "UserCalling")
+
+		/*if (mode == "FinalCalling")
 		{
 			window.draw(callingwindow);
 			window.draw(text);
@@ -475,15 +711,14 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], Sprite Bac
 			{
 				window.draw(CallNumber[c].shape);
 			}
+
 			for (int c = 0; c <= 3; c++)
 			{
 				window.draw(CallColor[c].shape);
 			}
-			for (int c = 0; c <= 1; c++)
-			{
-				window.draw(Choice[c].shape);
-			}
-		}
+
+			window.draw(Choice[1].shape);
+		}*/
 		
 		window.display();
 	}

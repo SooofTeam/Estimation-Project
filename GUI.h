@@ -22,8 +22,9 @@ public:
 class GUI
 {
 public:
+	int Caller = -1;
 	GUI();
-	void ProgramRun(RenderWindow &window, interactiveButton Card[14], Sprite BackGround,interactiveButton RoundDone,Sprite CardsHolder,vector<pair<int, string >> &Bids);
+	void ProgramRun(RenderWindow &window, interactiveButton Card[14], Sprite BackGround,interactiveButton RoundDone,Sprite CardsHolder,vector<pair<int, string >> &Bids, vector < vector < pair<int, string>>> Players);
 	void SetTextures(Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15], Texture &Background, Texture &CardsHolder);
 	void PlayerCardsSetup( vector < pair<int, string>> Players, interactiveButton Card[14], Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15]);
 	void normalize(interactiveButton &ib);
@@ -32,8 +33,10 @@ public:
 	bool LMB();
 	bool ibuttonAutoHover(interactiveButton &ib, sf::RenderWindow &window);
 	void GameDesign();
-	void GameDesignSetUp(Texture &avatar1, Sprite &Avatar1, Texture &avatar2, Sprite &Avatar2, Texture &avatar3, Sprite &Avatar3, Texture &SHDC, Sprite &shdc, Texture &CallingWindow, Sprite &callingwindow, interactiveButton CallNumber[14], interactiveButton CallColor[4], interactiveButton Choice[2]);
-	void hang();
+	void GameDesignSetUp(Texture &avatar1, Sprite &Avatar1, Texture &avatar2, Sprite &Avatar2, Texture &avatar3, Sprite &Avatar3, Texture &SHDC, Sprite &shdc, Texture &CallingWindow, Sprite &callingwindow, Sprite &callingwindow2, interactiveButton CallNumber[14], interactiveButton CallColor[4], interactiveButton Choice[2]);
+	string TrumpDes(vector<pair<int, string>> Bids, int &Caller, pair<int, string>UserBid);
+
+		void hang();
 
 	~GUI();
 };
