@@ -247,12 +247,17 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 
 			}
 		}
+		bool biggeT = 0;
 		for (int i = 0;i<Shapes[gro].size();i++) {
 			for (int x = 0; x < lammaty.size(); x++) {
 				if (gro == lammaty[x].second) {
 					for (int ik = 0; ik < CardDeck.size(); ik++) {
-
-						if (CardDeck[ik].second==gros&&(CardDeck[ik].first>lammaty[x].first||haseb)){
+						for (int hk = 0; hk < CardsOnGround.size(); hk++) {
+							if (lammaty[x].first < CardsOnGround[hk].first) {
+								biggeT = 1;
+							}
+						}
+						if (CardDeck[ik].second==gros&&(CardDeck[ik].first>lammaty[x].first||haseb||biggeT)){
 							pair<int, string> wara2a;
 							if (Shapes[gro].size() > 2) {
 								wara2a.first = Shapes[gro][Shapes[gro].size() / 2];
