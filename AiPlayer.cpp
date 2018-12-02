@@ -1,4 +1,3 @@
-
 #include "AiPlayer.h"
 
 
@@ -65,7 +64,7 @@ int AiPlayer::FinalCall(string trump, vector<pair<int, string>> pc, int Caller, 
 				{
 					counter += i.size() - 4;
 					Lammat.push_back(make_pair(i[i.size() - 1], ck));
-					                                        
+
 
 
 					for (auto j : i)
@@ -91,14 +90,14 @@ int AiPlayer::FinalCall(string trump, vector<pair<int, string>> pc, int Caller, 
 					counter++;
 				}
 			}
-				else if (i.size() == 1)
-				{
-					if (i[0] == 14) {
-						Lammat.push_back(make_pair(14, ck));
-						counter++;
-					}
+			else if (i.size() == 1)
+			{
+				if (i[0] == 14) {
+					Lammat.push_back(make_pair(14, ck));
+					counter++;
 				}
-			
+			}
+
 			Counter += counter;
 			ck++;
 			continue;
@@ -120,45 +119,44 @@ int AiPlayer::FinalCall(string trump, vector<pair<int, string>> pc, int Caller, 
 				counter++;
 			}
 		}
-			else if (i.size() == 2)
+		else if (i.size() == 2)
+		{
+			if (i[0] == 14 && i[1] == 13)
 			{
-				if (i[0] == 14 && i[1] == 13)
-				{
-					Lammat.push_back(make_pair(14, ck));
-					Lammat.push_back(make_pair(13, ck));
-					counter += 2;
-				}
-				else if (i[0] == 14 || i[0] == 13) {
-					Lammat.push_back(make_pair(i[0], ck));
-					counter++;
-				}
+				Lammat.push_back(make_pair(14, ck));
+				Lammat.push_back(make_pair(13, ck));
+				counter += 2;
 			}
-				else if (i.size() == 1)
-				{
-					if (i[0] == 14) {
-						Lammat.push_back(make_pair(14, ck));
-						counter++;
-					}
-				}
-
-				Counter += counter;
-				ck++;
-
-			if (Caller == -1)
-			{
-				if (Counter + TotalLammat == 13)
-					Counter--;
+			else if (i[0] == 14 || i[0] == 13) {
+				Lammat.push_back(make_pair(i[0], ck));
+				counter++;
 			}
+		}
+		else if (i.size() == 1)
+		{
+			if (i[0] == 14) {
+				Lammat.push_back(make_pair(14, ck));
+				counter++;
+			}
+		}
+
+		Counter += counter;
+		ck++;
+
+		if (Caller == -1)
+		{
+			if (Counter + TotalLammat == 13)
+				Counter--;
+		}
 
 
 
 	}
 
-	/*	cout << "Lamamty : " << endl;
+		cout << "Lamamty : " << endl;
 	for (int v = 0; v < Lammat.size(); v++)
 	{
 		cout << v << " ";
-
 		if (Lammat[v].second == 0)
 			cout << Lammat[v].first << " " << "Spades" << endl;
 		if (Lammat[v].second == 1)
@@ -168,16 +166,15 @@ int AiPlayer::FinalCall(string trump, vector<pair<int, string>> pc, int Caller, 
 		if (Lammat[v].second == 3)
 			cout << Lammat[v].first << " " << "Clubs" << endl;
 		cout << endl;
-
-	}*/
-			return Counter;
+	}
+	return Counter;
 }
 void AiPlayer::PlayGround(vector<pair<int, string>> CardOnGround, string Trump, vector<int> &KolElLammat)
 {
-	
+
 }
 
-pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> CardDeck, pair<int, string> CurrentGround, string Trump, vector < pair<int, string>>pc, string Status, int Lammat, int FinalCall)
+pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vector<pair<int, string>> CardsOnGround, string Trump, vector < pair<int, string>>pc, string Status, int Lammat, int FinalCall,vector<pair<int,int>>lammaty)
 {
 
 	vector <vector <int>> Shapes(4);
@@ -202,9 +199,9 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> CardDeck, pair<i
 			Shapes[3].push_back(i.first);
 		}
 	}
-	for(auto &i:Shapes)
+	for (auto &i : Shapes)
 		sort(i.rbegin(), i.rend());
-	
+
 	/*int c = 0;
 	for (auto &i : Shapes)
 	{
@@ -221,29 +218,86 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> CardDeck, pair<i
 
 	if (Status == "Over")
 	{
+		for (int j = 0; j < CardsOnGround.size(); j++)
+			for (int p = 0; p < CardDeck.size(); p++) {
+				if (CardsOnGround[j] == CardDeck[p]) {
+					CardDeck.erase(CardDeck.begin() + p);
+				}
+			}
+		int gro;
+		string gros;
+		if (CardsOnGround[0].second == "Spades") {
+			gro = 0; gros = "Spades";
+		}
+		if (CardsOnGround[0].second == "Hearts") {
+			gro = 1; gros = "Hearts";
+	}
+		if (CardsOnGround[0].second == "Diamonds") {
+			gro = 2; gros = "Diamonds";
+		}
+		if (CardsOnGround[0].second == "EClubs") {
+			gro = 3; gros = "EClubs";
+		}
+		int maxi=-1;
+		bool haseb = 0;
+		for (int kl = 1; kl < CardsOnGround.size(); kl++) {
+			if (CardsOnGround[kl].second == Trump && CardsOnGround[kl].second != CardsOnGround[0].second &&CardsOnGround[kl].first>maxi) {
+				maxi = CardsOnGround[kl].first;
+				haseb = 1;
 
+			}
+		}
+		for (int i = 0;i<Shapes[gro].size();i++) {
+			for (int x = 0; x < lammaty.size(); x++) {
+				if (gro == lammaty[x].second) {
+					for (int ik = 0; ik < CardDeck.size(); ik++) {
+
+						if (CardDeck[ik].second==gros&&(CardDeck[ik].first>lammaty[x].first||haseb)){
+							pair<int, string> wara2a;
+							if (Shapes[gro].size() > 2) {
+								wara2a.first = Shapes[gro][Shapes[gro].size() / 2];
+								Shapes[gro].erase(Shapes[gro].begin()+Shapes[gro].size() / 2);
+							}
+							else if(Shapes[gro].size()==2){
+								wara2a.first = Shapes[gro][1];
+								Shapes[gro].erase(Shapes[gro].begin() + 1);
+							}
+							else { wara2a.first = Shapes[gro][0]; 
+							Shapes[gro].erase(Shapes[gro].begin());
+							}
+							wara2a.second = gros;
+							CardDeck.erase(CardDeck.begin()+ik);
+							return wara2a;
+						}
+						else if (){
+
+						}
+					}
+				}
+			}
+		}
 	}
 
 
-		
 
 
-	
+
+
 	return pc[0];
 }
 
-pair<int, string> AiPlayer::BidCall(vector < pair<int,string>> pc)
+pair<int, string> AiPlayer::BidCall(vector < pair<int, string>> pc)
 {
 	vector<int>comp;
 	vector<pair<int, string>>Counter;
-	
-	
+
+
 
 	for (int i = 14; i >= 2; i--)
 		comp.push_back(i);
 
 	vector <vector <int>> Shapes(4);
-	
+
 	for (auto i : pc) {
 
 		if (i.second == "Spades")
@@ -266,7 +320,7 @@ pair<int, string> AiPlayer::BidCall(vector < pair<int,string>> pc)
 	}
 	int c = 0;
 	for (auto &i : Shapes) {
-		
+
 		priority_queue<int> des;
 		priority_queue<int, vector<int>, greater<int>> asc;
 
@@ -314,19 +368,19 @@ pair<int, string> AiPlayer::BidCall(vector < pair<int,string>> pc)
 
 	sort(Counter.begin(), Counter.end());
 
-	
+
 	return Counter.back();
 }
-pair<int, string> AiPlayer::MainCall(pair<int ,string> &Bidcall,vector < pair<int, string>> &pc)
+pair<int, string> AiPlayer::MainCall(pair<int, string> &Bidcall, vector < pair<int, string>> &pc)
 {
 	vector<int>comp;
-	int Counter=0;
+	int Counter = 0;
 
 	vector <vector <int>> Shapes(4);
 	if (Bidcall.second == "Clubs")
 		Bidcall.second = "EClubs";
 
-	for (auto i : pc) 
+	for (auto i : pc)
 	{
 		if (i.second == Bidcall.second)
 			continue;
@@ -335,11 +389,11 @@ pair<int, string> AiPlayer::MainCall(pair<int ,string> &Bidcall,vector < pair<in
 		{
 			Shapes[0].push_back(i.first);
 		}
-		if (i.second== "Hearts")
+		if (i.second == "Hearts")
 		{
 			Shapes[1].push_back(i.first);
 		}
-		if (i.second== "Diamonds")
+		if (i.second == "Diamonds")
 		{
 			Shapes[2].push_back(i.first);
 		}
@@ -354,16 +408,16 @@ pair<int, string> AiPlayer::MainCall(pair<int ,string> &Bidcall,vector < pair<in
 		sort(i.rbegin(), i.rend());
 
 
-	for (auto &i:Shapes)
+	for (auto &i : Shapes)
 	{
-		
-	int counter = 0;
+
+		int counter = 0;
 
 		if (i.size() >= 3)
 		{
 
-			if (i[0] == 14 && i[1]==13)
-				counter+=2;
+			if (i[0] == 14 && i[1] == 13)
+				counter += 2;
 			else if (i[0] == 14)
 				counter++;
 			else if (i[0] == 13)
@@ -384,14 +438,14 @@ pair<int, string> AiPlayer::MainCall(pair<int ,string> &Bidcall,vector < pair<in
 				counter++;
 		}
 
-		Counter+=counter;
+		Counter += counter;
 	}
 	pair<int, string> Call;
-	Call.first = Counter+Bidcall.first;
+	Call.first = Counter + Bidcall.first;
 	Call.second = Bidcall.second;
 
 	return Call;
-	
+
 
 
 
