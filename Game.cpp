@@ -6,14 +6,18 @@ bool sortbysec(const pair<int, string> &a,const pair<int, string> &b)
 
 
 
-	int main()
+int main()
 {
 		
 		GUI gui;
 		AiPlayer Ai;
 		CardDeck Deck;
 		RenderWindow GameWindow(VideoMode(1000, 550), "Estimation", Style::Close | Style::Resize);
-		interactiveButton Card[14];
+		interactiveButton UserCards[14];
+		interactiveButton AiPlayer_0_Cards[14];
+		interactiveButton AiPlayer_1_Cards[14];
+		interactiveButton AiPlayer_2_Cards[14];
+
 		interactiveButton CurrentRound;
 		Texture Background,Spades[15],Hearts[15],Diamonds[15],Clubs[15],Cardsholder;
 		Sprite BackGround, CardsHolder;
@@ -58,8 +62,16 @@ bool sortbysec(const pair<int, string> &a,const pair<int, string> &b)
 		//sort(Bids.rbegin(), Bids.rend());
 	
 
-		gui.PlayerCardsSetup(Players[3], Card, Spades, Hearts, Diamonds, Clubs);
+
+		gui.Ai_0_CardsSetup(Players[0], AiPlayer_0_Cards, Spades, Hearts, Diamonds, Clubs);
+
+		gui.Ai_1_CardsSetup(Players[1], AiPlayer_1_Cards, Spades, Hearts, Diamonds, Clubs);
+
+		gui.Ai_2_CardsSetup(Players[2], AiPlayer_2_Cards, Spades, Hearts, Diamonds, Clubs);
+
+		gui.PlayerCardsSetup(Players[3], UserCards, Spades, Hearts, Diamonds, Clubs);
+		
 		BackGround.setTexture(Background);
 		CardsHolder.setTexture(Cardsholder);
-		gui.ProgramRun(GameWindow, Card, BackGround, CurrentRound,CardsHolder,Bids,Players);
+		gui.ProgramRun(GameWindow, UserCards,AiPlayer_0_Cards,AiPlayer_1_Cards,AiPlayer_2_Cards, BackGround, CurrentRound,CardsHolder,Bids,Players);
 }
