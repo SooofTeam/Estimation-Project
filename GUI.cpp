@@ -6,7 +6,7 @@ GUI::GUI()
 {
 }
 
-void GUI::SetTextures(Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15], Texture &Background,Texture &CardsHolder)
+void GUI::SetTextures(Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15], Texture &Background, Texture &CardsHolder)
 {
 	///////////////////////Spades Textures////////////////////
 	Spades[2].loadFromFile("CardsTextures/2_of_spades.jpg");
@@ -154,7 +154,7 @@ void GUI::Ai_1_CardsSetup(vector < pair<int, string>> Players, interactiveButton
 		if (Players[j].second == "Spades")
 		{
 			Card[j].normal = Spades[Players[j].first];
-			Card[j].shape.setPosition(524,90);
+			Card[j].shape.setPosition(524, 90);
 			Card[j].TypeAndValue.first = "Spades";
 			Card[j].TypeAndValue.second = Players[j].first;
 		}
@@ -225,15 +225,15 @@ void GUI::Ai_2_CardsSetup(vector < pair<int, string>> Players, interactiveButton
 }
 
 
-void GUI::GameDesignSetUp(Texture &avatar1,Sprite &Avatar1, Texture &avatar2, Sprite &Avatar2, Texture &avatar3, Sprite &Avatar3, Texture &SHDC, Sprite &shdc, Texture &CallingWindow, Sprite &callingwindow, Sprite &callingwindow2, interactiveButton CallNumber[14], interactiveButton CallColor[4],interactiveButton Choice[2])
+void GUI::GameDesignSetUp(Texture &avatar1, Sprite &Avatar1, Texture &avatar2, Sprite &Avatar2, Texture &avatar3, Sprite &Avatar3, Texture &SHDC, Sprite &shdc, Texture &CallingWindow, Sprite &callingwindow, Sprite &callingwindow2, interactiveButton CallNumber[14], interactiveButton CallColor[4], interactiveButton Choice[2])
 {
-	int factor=12;
+	int factor = 12;
 	avatar1.loadFromFile("CardsTextures/Avatar1.jpg");
 	Avatar1.setTexture(avatar1);
 
 	avatar2.loadFromFile("CardsTextures/Avatar2.jpg");
 	Avatar2.setTexture(avatar2);
-	
+
 	avatar3.loadFromFile("CardsTextures/Avatar3.jpg");
 	Avatar3.setTexture(avatar3);
 
@@ -291,9 +291,9 @@ void GUI::GameDesignSetUp(Texture &avatar1,Sprite &Avatar1, Texture &avatar2, Sp
 	{
 		normalize(Choice[i]);
 		Choice[i].shape.setSize(Vector2f(100.0f, 29.0f));
-		if(i==0)
+		if (i == 0)
 			Choice[i].shape.setPosition(12, 270.0f);
-		else if(i==1)
+		else if (i == 1)
 			Choice[i].shape.setPosition(300, 270.0f);
 		RectButtonAssign(Choice[i]);
 		Choice[i].TypeAndValue.second = i;
@@ -310,17 +310,17 @@ void GUI::GameDesignSetUp(Texture &avatar1,Sprite &Avatar1, Texture &avatar2, Sp
 	}
 
 	factor = 12;
-	
+
 	for (int i = 7; i <= 13; i++)
 	{
 		if (i <= 9)
 		{
-		normalize(CallNumber[i]);
-		CallNumber[i].shape.setSize(Vector2f(67.0f, 50.0f));
-		CallNumber[i].shape.setPosition(factor, 155.0f);
-		RectButtonAssign(CallNumber[i]);
-		CallNumber[i].TypeAndValue.second = i;
-		factor += 67;
+			normalize(CallNumber[i]);
+			CallNumber[i].shape.setSize(Vector2f(67.0f, 50.0f));
+			CallNumber[i].shape.setPosition(factor, 155.0f);
+			RectButtonAssign(CallNumber[i]);
+			CallNumber[i].TypeAndValue.second = i;
+			factor += 67;
 		}
 		else
 		{
@@ -334,7 +334,7 @@ void GUI::GameDesignSetUp(Texture &avatar1,Sprite &Avatar1, Texture &avatar2, Sp
 	}
 
 	factor = 12;
-	
+
 	for (int i = 0; i <= 3; i++)
 	{
 		normalize(CallColor[i]);
@@ -357,41 +357,41 @@ void GUI::GameDesignSetUp(Texture &avatar1,Sprite &Avatar1, Texture &avatar2, Sp
 
 }
 
- string GUI::TrumpDes(vector<pair<int, string>> Bids,int &Caller,pair<int,string>UserBid)
+string GUI::TrumpDes(vector<pair<int, string>> Bids, int &Caller, pair<int, string>UserBid)
 {
-	 pair<int,string> max = Bids[0];
-		Caller = 0;
-	 for (int  i = 1; i < 3; i++)
-	 {
-		 if (Bids[i].first > max.first)
-		 {
-			 Caller = i;
-			 max = Bids[i];
-		 }
-		 else if (Bids[i].first == max.first)
-		 {
-			 if (Bids[i].second > max.second)
-			 {
-				 Caller = i;
-				 max = Bids[i];
-			 }
-		 }
-	 }
+	pair<int, string> max = Bids[0];
+	Caller = 0;
+	for (int i = 1; i < 3; i++)
+	{
+		if (Bids[i].first > max.first)
+		{
+			Caller = i;
+			max = Bids[i];
+		}
+		else if (Bids[i].first == max.first)
+		{
+			if (Bids[i].second > max.second)
+			{
+				Caller = i;
+				max = Bids[i];
+			}
+		}
+	}
 
-	 if (UserBid.first > max.first)
-	 {
-		 Caller = 3;
-		 max = UserBid;
-	 }
+	if (UserBid.first > max.first)
+	{
+		Caller = 3;
+		max = UserBid;
+	}
 
 
-	 return max.second;
+	return max.second;
 }
 
 
 
 
-void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], interactiveButton Ai_0_Card[14], interactiveButton Ai_1_Card[14], interactiveButton Ai_2_Card[14], Sprite BackGround,interactiveButton RoundDone,Sprite CardsHolder, vector<pair<int, string >> &Bids, vector < vector < pair<int, string>>> Players )
+void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interactiveButton Ai_0_Card[14], interactiveButton Ai_1_Card[14], interactiveButton Ai_2_Card[14], Sprite BackGround, interactiveButton RoundDone, Sprite CardsHolder, vector<pair<int, string >> &Bids, vector < vector < pair<int, string>>> Players)
 {
 
 	AiPlayer Ai;
@@ -422,47 +422,47 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], interactiv
 	Sprite callingwindow;
 	Sprite callingwindow2;
 
-	GameDesignSetUp(avatar1, Avatar1, avatar2, Avatar2, avatar3, Avatar3, SHDC, shdc, CallingWindow,callingwindow,callingwindow2,CallNumber,CallColor,Choice);
+	GameDesignSetUp(avatar1, Avatar1, avatar2, Avatar2, avatar3, Avatar3, SHDC, shdc, CallingWindow, callingwindow, callingwindow2, CallNumber, CallColor, Choice);
 
 	Text text;
 	Font font;
 	pair<string, string> HighestBid;
-	
+
 	int maximum = Bids[0].first;
 	for (int i = 0; i < Bids.size(); i++)
 	{
 		if (Bids[i].first > maximum)
 		{
-		HighestBid.first=to_string(Bids[i].first);
-		HighestBid.second = Bids[i].second;
-		maximum = Bids[i].first;
+			HighestBid.first = to_string(Bids[i].first);
+			HighestBid.second = Bids[i].second;
+			maximum = Bids[i].first;
 		}
 	}
 
 
 	font.loadFromFile("ObelixPro-cyr.ttf");
 	text.setFont(font);
-	text.setString("The Highest Bid Till now is : "+HighestBid.first+" Of "+HighestBid.second);
-	text.setPosition(290,180);
+	text.setString("The Highest Bid Till now is : " + HighestBid.first + " Of " + HighestBid.second);
+	text.setPosition(290, 180);
 	text.setCharacterSize(15);
 	text.setFillColor(Color::Black);
 	text.Bold;
-	
+
 	CardsHolder.setPosition(95, 460);
 
-	
+
 
 
 	for (int i = 0; i < 13; i++)
-		{
+	{
 		Card[i].shape.setSize(Vector2f(75, 108));
 		//Ai_0_Card[i].shape.setSize(Vector2f(75, 108));
 		//Ai_1_Card[i].shape.setSize(Vector2f(75, 108));
 		//Ai_2_Card[i].shape.setSize(Vector2f(75, 108));
-		}
+	}
 	float factorx = 60;
 	bool roundstarted = true;
-	int i = 0, i2=0;
+	int i = 0, i2 = 0;
 	int h = 0;
 	int m = -1;
 	bool finalcall = false;
@@ -493,11 +493,11 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], interactiv
 
 		if (i != 13)
 		{
-			
+
 
 			if (Card[i].shape.getPosition().y >= destination.y)
 			{
-				Card[i].shape.move(0,-100);
+				Card[i].shape.move(0, -100);
 			}
 			else
 			{
@@ -507,13 +507,13 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], interactiv
 			}
 		}
 
-			if (roundstarted && i==13)
-			{
-				mode = "UserCalling";
-			}
-			
+		if (roundstarted && i == 13)
+		{
+			mode = "UserCalling";
+		}
 
-		if (h != 1 && i == 13&& !roundstarted)
+
+		if (h != 1 && i == 13 && !roundstarted)
 		{
 			for (int f = 0; f < 13; f++)
 			{
@@ -522,7 +522,7 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], interactiv
 			h++;
 		}
 
-	
+
 		for (int p = 0; p < 13; p++)
 		{
 
@@ -530,8 +530,8 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], interactiv
 			{
 				if (ishovered[p] == 0)
 				{
-				ishovered[p] = 1;
-				Card[p].shape.move(0, -20);
+					ishovered[p] = 1;
+					Card[p].shape.move(0, -20);
 				}
 			}
 			else
@@ -543,9 +543,9 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], interactiv
 				}
 
 			}
-		} 
-		
-		
+		}
+
+
 		for (int p = 0; p < 13; p++)
 		{
 			if (ibuttonAutoHover(Card[p], window))
@@ -555,32 +555,32 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], interactiv
 				hang();
 			}
 		}
-		
+
 
 
 		if (mode == "UserCalling")
 		{
-			RenderWindow CallingWindow1(VideoMode(502,325), "Estimation" , Style::Close | Style::Resize);
+			RenderWindow CallingWindow1(VideoMode(502, 325), "Estimation", Style::Close | Style::Resize);
 			//here
 			callingwindow.setPosition(0, 0);
 			text.setPosition(9, 53);
-		while (CallingWindow1.isOpen())
-		{
-
-			Event E;
-			while (window.pollEvent(E))
+			while (CallingWindow1.isOpen())
 			{
-				switch (E.type)
-				{
-				case Event::Closed:
-					window.close();
-					break;
-				default:
-					break;
-				}
-			}
 
-			
+				Event E;
+				while (window.pollEvent(E))
+				{
+					switch (E.type)
+					{
+					case Event::Closed:
+						window.close();
+						break;
+					default:
+						break;
+					}
+				}
+
+
 
 				for (int c = 0; c <= 13; c++)
 				{
@@ -594,7 +594,7 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], interactiv
 				{
 					if (checkCallNumber[c])
 					{
-					CallNumber[c].shape.setTexture(&CallNumber[c].clicked);
+						CallNumber[c].shape.setTexture(&CallNumber[c].clicked);
 						UserBid.first = CallNumber[c].TypeAndValue.second;
 
 					}
@@ -654,23 +654,23 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], interactiv
 
 
 
-		CallingWindow1.clear();
-		CallingWindow1.draw(callingwindow);
-		CallingWindow1.draw(text);
-		for (int c = 0; c <= 13; c++)
-		{
-			CallingWindow1.draw(CallNumber[c].shape);
-		}
-		for (int c = 0; c <= 3; c++)
-		{
-			CallingWindow1.draw(CallColor[c].shape);
-		}
-		for (int c = 0; c <= 1; c++)
-		{
-			CallingWindow1.draw(Choice[c].shape);
-		}
+				CallingWindow1.clear();
+				CallingWindow1.draw(callingwindow);
+				CallingWindow1.draw(text);
+				for (int c = 0; c <= 13; c++)
+				{
+					CallingWindow1.draw(CallNumber[c].shape);
+				}
+				for (int c = 0; c <= 3; c++)
+				{
+					CallingWindow1.draw(CallColor[c].shape);
+				}
+				for (int c = 0; c <= 1; c++)
+				{
+					CallingWindow1.draw(Choice[c].shape);
+				}
 
-		CallingWindow1.display();
+				CallingWindow1.display();
 
 			}
 		}
@@ -683,7 +683,7 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], interactiv
 			if (Trump == "EClubs")v = 3;
 
 
-				normalize(CallNumber[UserBid.first]);
+			normalize(CallNumber[UserBid.first]);
 			for (int x = 0; x < 4; x++)
 			{
 				if (CallColor[x].TypeAndValue.second == v)
@@ -703,55 +703,55 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], interactiv
 
 		}
 		if (mode == "FinalCalling")
-			{
-
-
-				RenderWindow CallingWindow2(VideoMode(502, 325), "Estimation", Style::Close | Style::Resize);
-
-
-
-		for (int c=0,b=Caller;c<4;c++)
 		{
-			int temp = 0;
-			if (b == 3)//User Final Call
+
+
+			RenderWindow CallingWindow2(VideoMode(502, 325), "Estimation", Style::Close | Style::Resize);
+
+
+
+			for (int c = 0, b = Caller; c < 4; c++)
 			{
-				while (CallingWindow2.isOpen())
+				int temp = 0;
+				if (b == 3)//User Final Call
 				{
-
-					Event E;
-					while (window.pollEvent(E))
+					while (CallingWindow2.isOpen())
 					{
-						switch (E.type)
+
+						Event E;
+						while (window.pollEvent(E))
 						{
-						case Event::Closed:
-							window.close();
-							break;
-						default:
-							break;
+							switch (E.type)
+							{
+							case Event::Closed:
+								window.close();
+								break;
+							default:
+								break;
+							}
 						}
-					}
 
 
-					for (int c = 0; c <= 13; c++)
-					{
-						if (ibuttonAutoHover(CallNumber[c], CallingWindow2))
+						for (int c = 0; c <= 13; c++)
 						{
-							finalcall = true;
-							memset(checkCallNumber, 0, 14);
-							checkCallNumber[c] = 1;
+							if (ibuttonAutoHover(CallNumber[c], CallingWindow2))
+							{
+								finalcall = true;
+								memset(checkCallNumber, 0, 14);
+								checkCallNumber[c] = 1;
+							}
 						}
-					}
 
-					for (int c = 0; c <= 13; c++)
-					{
-						if (checkCallNumber[c])
+						for (int c = 0; c <= 13; c++)
 						{
-							CallNumber[c].shape.setTexture(&CallNumber[c].clicked);
-							UserBid.first = CallNumber[c].TypeAndValue.second;
+							if (checkCallNumber[c])
+							{
+								CallNumber[c].shape.setTexture(&CallNumber[c].clicked);
+								UserBid.first = CallNumber[c].TypeAndValue.second;
 
+							}
 						}
-					}
-			
+
 						if (ibuttonAutoHover(Choice[1], CallingWindow2) && finalcall)
 						{
 							TotalLammat += UserBid.first;
@@ -778,87 +778,87 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], interactiv
 
 						CallingWindow2.display();
 
+					}
+					cout << UserBid.first << " " << Trump << endl;
+					continue;
 				}
-				cout << UserBid.first<<" "<<Trump<< endl;
-				continue;
+				if (c == 3)
+				{
+
+					temp = Ai.FinalCall(Trump, Players[b], -1, TotalLammat, Halemm[b]);
+					TotalLammat += temp;
+
+					cout << temp << " " << Trump << endl;
+
+					if (finalcall)
+						mode = "Playing";
+
+					(TotalLammat > 13) ? status = "Over" : status = "Under";
+
+					break;
+				}
+
+				temp = Ai.FinalCall(Trump, Players[b], b, TotalLammat, Halemm[b]);
+
+				cout << temp << " " << Trump << endl;
+				TotalLammat += temp;
+
+				b = (b + 1) % 4;
 			}
-			if (c == 3 )
-			{
-				
-			temp = Ai.FinalCall(Trump,Players[b], -1, TotalLammat,Halemm[b]);
-			TotalLammat += temp;
 
-			cout << temp << " " << Trump << endl;
 
-			if(finalcall)
-			mode = "Playing";
-							
-			(TotalLammat > 13) ? status = "Over" : status = "Under";
-
-			break;
-			}
-			
-			temp = Ai.FinalCall(Trump, Players[b], b, TotalLammat,Halemm[b]);
-			
-			cout << temp << " " << Trump << endl;
-			TotalLammat += temp;
-
-			b =(b+ 1) % 4;
-		}
-
-		
 		}
 		if (mode == "Playing")
 		{
-			
 
-			
+
+
 			if (m == -1)
 			{
-			vector<pair<int, string>> ground;
-			int Lammat=0,FinalCall=0;
+				vector<pair<int, string>> ground;
+				int Lammat = 0, FinalCall = 0;
 
-			ground.push_back(make_pair(14, "EClubs"));
-			ground.push_back(make_pair(8, "EClubs"));
-			
-			wara2a=Ai.CardDes(Deck.Cards(), ground, Trump, Players[2], status, Lammat, FinalCall, Halemm[2]);
-			cout << wara2a.first << " " << wara2a.second << endl;
+				//ground.push_back(make_pair(14, "EClubs"));
+				//ground.push_back(make_pair(8, "EClubs"));
 
-			for (int v = 0; v < Players[2].size(); v++)
-			{
-				if (Players[2][v].first == wara2a.first && Players[2][v].second == wara2a.second)
+				wara2a = Ai.CardDes(Deck.Cards(), ground, Trump, Players[2], status, Lammat, FinalCall, Halemm[2]);
+				cout << wara2a.first << " " << wara2a.second << endl;
+
+				for (int v = 0; v < Players[2].size(); v++)
 				{
-					m = v;
-					break;
+					if (Players[2][v].first == wara2a.first && Players[2][v].second == wara2a.second)
+					{
+						m = v;
+						break;
+					}
 				}
-			}
 			}
 
 			mode = " ";
 		}
-		
+
 		if (m != -1)
 		{
 			Ai_2_Card[m].shape.setSize(Vector2f(75, 108));
-			if (Ai_2_Card[m].shape.getPosition().x<400)
+			if (Ai_2_Card[m].shape.getPosition().x < 400)
 			{
 				Ai_2_Card[m].shape.move(5, 0);
 			}
-			
+
 
 		}
 
-		
+
 
 
 		if (LMB())
 		{
-			
+
 			cout << Mouse::getPosition(window).x << " " << Mouse::getPosition(window).y << endl;
 			hang();
 		}
-		
-		
+
+
 		window.clear();
 		window.draw(BackGround);
 		window.draw(RoundDone.shape);
@@ -869,10 +869,10 @@ void GUI::ProgramRun(RenderWindow &window,interactiveButton Card[14], interactiv
 		window.draw(shdc);
 		for (int i = 0; i < 13; i++)
 		{
-		window.draw(Card[i].shape);
-		window.draw(Ai_0_Card[i].shape);
-		window.draw(Ai_1_Card[i].shape);
-		window.draw(Ai_2_Card[i].shape);
+			window.draw(Card[i].shape);
+			window.draw(Ai_0_Card[i].shape);
+			window.draw(Ai_1_Card[i].shape);
+			window.draw(Ai_2_Card[i].shape);
 		}
 		window.display();
 	}
@@ -885,7 +885,7 @@ void GUI::normalize(interactiveButton &ib)
 void GUI::RectButtonAssign(interactiveButton &ib)
 {
 	ib.button.lowerLimit = ib.shape.getPosition();
-	ib.button.upperLimit.x = ib.button.lowerLimit.x + ib.shape.getSize().x -15 ;
+	ib.button.upperLimit.x = ib.button.lowerLimit.x + ib.shape.getSize().x - 15;
 	ib.button.upperLimit.y = ib.button.lowerLimit.y + ib.shape.getSize().y;
 }
 bool GUI::LMB()
@@ -925,7 +925,7 @@ void GUI::hang()
 
 void GUI::GameDesign()
 {
-	
+
 }
 
 GUI::~GUI()
