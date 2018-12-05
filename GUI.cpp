@@ -115,14 +115,14 @@ void GUI::Ai_0_CardsSetup(vector < pair<int, string>> Players, interactiveButton
 		if (Players[j].second == "Spades")
 		{
 			Card[j].normal = Spades[Players[j].first];
-			Card[j].shape.setPosition(867, 276);
+			Card[j].shape.setPosition(855, 230);
 			Card[j].TypeAndValue.first = "Spades";
 			Card[j].TypeAndValue.second = Players[j].first;
 		}
 		else if (Players[j].second == "Hearts")
 		{
 			Card[j].normal = Hearts[Players[j].first];
-			Card[j].shape.setPosition(867, 276);
+			Card[j].shape.setPosition(855, 230);
 			Card[j].TypeAndValue.first = "Hearts";
 			Card[j].TypeAndValue.second = Players[j].first;
 
@@ -130,14 +130,14 @@ void GUI::Ai_0_CardsSetup(vector < pair<int, string>> Players, interactiveButton
 		else if (Players[j].second == "Diamonds")
 		{
 			Card[j].normal = Diamonds[Players[j].first];
-			Card[j].shape.setPosition(867, 276);
+			Card[j].shape.setPosition(855, 230);
 			Card[j].TypeAndValue.first = "Diamonds";
 			Card[j].TypeAndValue.second = Players[j].first;
 		}
 		else if (Players[j].second == "EClubs")
 		{
 			Card[j].normal = Clubs[Players[j].first];
-			Card[j].shape.setPosition(867, 276);
+			Card[j].shape.setPosition(855, 230);
 			Card[j].TypeAndValue.first = "EClubs";
 			Card[j].TypeAndValue.second = Players[j].first;
 		}
@@ -154,14 +154,14 @@ void GUI::Ai_1_CardsSetup(vector < pair<int, string>> Players, interactiveButton
 		if (Players[j].second == "Spades")
 		{
 			Card[j].normal = Spades[Players[j].first];
-			Card[j].shape.setPosition(524, 90);
+			Card[j].shape.setPosition(475, 90);
 			Card[j].TypeAndValue.first = "Spades";
 			Card[j].TypeAndValue.second = Players[j].first;
 		}
 		else if (Players[j].second == "Hearts")
 		{
 			Card[j].normal = Hearts[Players[j].first];
-			Card[j].shape.setPosition(524, 90);
+			Card[j].shape.setPosition(475, 90);
 			Card[j].TypeAndValue.first = "Hearts";
 			Card[j].TypeAndValue.second = Players[j].first;
 
@@ -169,14 +169,14 @@ void GUI::Ai_1_CardsSetup(vector < pair<int, string>> Players, interactiveButton
 		else if (Players[j].second == "Diamonds")
 		{
 			Card[j].normal = Diamonds[Players[j].first];
-			Card[j].shape.setPosition(524, 90);
+			Card[j].shape.setPosition(475, 90);
 			Card[j].TypeAndValue.first = "Diamonds";
 			Card[j].TypeAndValue.second = Players[j].first;
 		}
 		else if (Players[j].second == "EClubs")
 		{
 			Card[j].normal = Clubs[Players[j].first];
-			Card[j].shape.setPosition(524, 90);
+			Card[j].shape.setPosition(475, 90);
 			Card[j].TypeAndValue.first = "EClubs";
 			Card[j].TypeAndValue.second = Players[j].first;
 		}
@@ -465,11 +465,19 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 	int i = 0, i2 = 0;
 	int h = 0;
 	int m = -1;
+	vector<int> Lammat(4);
+	vector<int>Calls(4);
 	bool finalcall = false;
-	bool usertturn = false;
+	bool UserTurn = false, Player0Turn = false, Player1Turn = false, Player2Turn = false;
+	vector<vector<pair<int, string>>> DecksOfCards(3);
+	for (int i = 0; i < 3; i++)
+	{
+		DecksOfCards[i] = Deck.Cards();
+	}
 	pair<int, string> wara2a;
 	Vector2f destination = Vector2f(1000, 550);
 	string mode = "in_game";
+	vector<pair <int, string>> OnGround;
 	bool checkCallNumber[14] = {};
 	memset(checkCallNumber, 0, 14);
 	bool checkCallColor[4] = {};
@@ -513,48 +521,13 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 		}
 
 
-		if (h != 1 && i == 13 && !roundstarted)
-		{
-			for (int f = 0; f < 13; f++)
-			{
-				RectButtonAssign(Card[f]);
-			}
-			h++;
-		}
+		
 
 
-		for (int p = 0; p < 13; p++)
-		{
-
-			if (isButtonHovered(Card[p], window))
-			{
-				if (ishovered[p] == 0)
-				{
-					ishovered[p] = 1;
-					Card[p].shape.move(0, -20);
-				}
-			}
-			else
-			{
-				if (ishovered[p] == 1)
-				{
-					ishovered[p] = 0;
-					Card[p].shape.move(0, 20);
-				}
-
-			}
-		}
+		
 
 
-		for (int p = 0; p < 13; p++)
-		{
-			if (ibuttonAutoHover(Card[p], window))
-			{
-				Card[p].shape.setPosition(500, 150);
-				Card[p].Reset();
-				hang();
-			}
-		}
+		
 
 
 
@@ -674,6 +647,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 			}
 		}
+	
 		if (mode == "BeforeFinalCalling")
 		{
 			int v;
@@ -702,13 +676,10 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			mode = "FinalCalling";
 
 		}
+		
 		if (mode == "FinalCalling")
 		{
-
-
 			RenderWindow CallingWindow2(VideoMode(502, 325), "Estimation", Style::Close | Style::Resize);
-
-
 
 			for (int c = 0, b = Caller; c < 4; c++)
 			{
@@ -755,9 +726,13 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 						if (ibuttonAutoHover(Choice[1], CallingWindow2) && finalcall)
 						{
 							TotalLammat += UserBid.first;
+							Calls[b] = UserBid.first;
 							b = (b + 1) % 4;
 							CallingWindow2.close();
-							mode = "Playing";
+							if (Caller == 0){mode =  "Player0Turn"; Player0Turn = 1; }
+							else if (Caller == 1) { mode = "Player1Turn"; Player1Turn = 1; }
+							else if (Caller == 2) { mode = "Player2Turn"; Player2Turn = 1; }
+							else if (Caller == 3) { mode = "UserTurn"; UserTurn = 1; }
 							break;
 						}
 
@@ -779,19 +754,24 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 						CallingWindow2.display();
 
 					}
-					cout << UserBid.first << " " << Trump << endl;
 					continue;
 				}
 				if (c == 3)
 				{
 
-					temp = Ai.FinalCall(Trump, Players[b], -1, TotalLammat, Halemm[b]);
+					temp = Ai.FinalCall(Trump, Players[b], -1 ,  TotalLammat, Halemm[b]);
 					TotalLammat += temp;
 
-					cout << temp << " " << Trump << endl;
+					Calls[b] = temp;
+
 
 					if (finalcall)
-						mode = "Playing";
+					{
+						if (Caller == 0) { mode = "Player0Turn"; Player0Turn = 1; }
+						else if (Caller == 1) { mode = "Player1Turn"; Player1Turn = 1; }
+						else if (Caller == 2) { mode = "Player2Turn"; Player2Turn = 1; }
+						else if (Caller == 3) { mode = "UserTurn"; UserTurn = 1; }
+					}
 
 					(TotalLammat > 13) ? status = "Over" : status = "Under";
 
@@ -799,31 +779,149 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 				}
 
 				temp = Ai.FinalCall(Trump, Players[b], b, TotalLammat, Halemm[b]);
-
+				
+				Calls[b] = temp;
+				
 				cout << temp << " " << Trump << endl;
 				TotalLammat += temp;
 
 				b = (b + 1) % 4;
 			}
-
-
 		}
-		if (mode == "Playing")
+
+		if (mode == "UserTurn" && UserTurn)
+		{
+				for (int f = 0; f < 13; f++)
+				{
+					
+					RectButtonAssign(Card[f]);
+					
+				}
+				for (int p = 0; p < 13; p++)
+				{
+
+					if (isButtonHovered(Card[p], window))
+					{
+						if (ishovered[p] == 0)
+						{
+							ishovered[p] = 1;
+							Card[p].shape.move(0, -20);
+						}
+					}
+					else
+					{
+						if (ishovered[p] == 1)
+						{
+							ishovered[p] = 0;
+							Card[p].shape.move(0, 20);
+						}
+
+					}
+				}
+
+				for (int p = 0; p < 13; p++)
+				{
+					if (ibuttonAutoHover(Card[p], window))
+					{
+						pair <int, string> temp;
+						temp.first = Card[p].TypeAndValue.second;
+						temp.second = Card[p].TypeAndValue.first;
+						wara2a = temp;
+						OnGround.push_back(wara2a);
+						m = p;
+						Card[p].Reset();
+						hang();
+						mode = "UserPlaying";
+						Card[m].shape.setPosition(Vector2f(477,447));
+						break;
+					}
+				}
+				
+		}
+
+		if (mode == "UserPlaying")
 		{
 
-
-
-			if (m == -1)
+			if (Card[m].shape.getPosition().y >290)
 			{
-				vector<pair<int, string>> ground;
-				int Lammat = 0, FinalCall = 0;
+				Card[m].shape.move(0, -5);
+			}
+			else
+			{
+				mode = "Player0Turn";
+				Player0Turn = true;
+				m = -1;
+			}
+		}
 
-				//ground.push_back(make_pair(14, "EClubs"));
-				//ground.push_back(make_pair(8, "EClubs"));
+		if (mode == "Player0Turn" && Player0Turn)
+		{
+			cout << "Player : 0   ";
 
-				wara2a = Ai.CardDes(Deck.Cards(), ground, Trump, Players[2], status, Lammat, FinalCall, Halemm[2]);
-				cout << wara2a.first << " " << wara2a.second << endl;
+			wara2a = Ai.CardDes(DecksOfCards[0], OnGround, Trump, Players[0], status, Lammat[0], Calls[0], Halemm[0]);
+			CardsOnGround.push_back(wara2a);
+			for (int v = 0; v < Players[0].size(); v++)
+			{
+				if (Players[0][v].first == wara2a.first && Players[0][v].second == wara2a.second)
+				{
+					m = v;
+					break;
+				}
+			}
+			mode = "Player0Playing";
+		}
 
+		if (mode == "Player0Playing")
+		{
+			Ai_0_Card[m].shape.setSize(Vector2f(75, 108));
+			if (Ai_0_Card[m].shape.getPosition().x >550)
+			{
+				Ai_0_Card[m].shape.move(-5, 0);
+			}
+			else
+			{
+				mode = "Player1Turn";
+				Player1Turn = true;
+				m = -1;
+			}
+		}
+
+		if (mode == "Player1Turn" && Player1Turn)
+		{
+			cout << "Player : 1   ";
+			wara2a = Ai.CardDes(DecksOfCards[1], OnGround, Trump, Players[1], status, Lammat[1], Calls[1], Halemm[1]);
+			CardsOnGround.push_back(wara2a);
+			for (int v = 0; v < Players[1].size(); v++)
+			{
+				if (Players[1][v].first == wara2a.first && Players[1][v].second == wara2a.second)
+				{
+					m = v;
+					break;
+				}
+			}
+			mode = "Player1Playing";
+		}
+
+		if (mode == "Player1Playing")
+		{
+			Ai_1_Card[m].shape.setSize(Vector2f(75, 108));
+			if (Ai_1_Card[m].shape.getPosition().y <180)
+			{
+				Ai_1_Card[m].shape.move(0, 5);
+			}
+			else
+			{
+				mode = "Player2Turn";
+				Player2Turn = true;
+				m = -1;
+			}
+		}
+
+		if (mode == "Player2Turn" && Player2Turn)
+		{
+			cout << "Player : 2   ";
+				wara2a = Ai.CardDes(DecksOfCards[2], OnGround, Trump, Players[2], status, Lammat[2], Calls[2], Halemm[2]);
+				CardsOnGround.push_back(wara2a);
 				for (int v = 0; v < Players[2].size(); v++)
 				{
 					if (Players[2][v].first == wara2a.first && Players[2][v].second == wara2a.second)
@@ -832,23 +930,24 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 						break;
 					}
 				}
-			}
-
-			mode = " ";
+			mode = "Player2Playing";
 		}
 
-		if (m != -1)
+		if (mode=="Player2Playing")
 		{
 			Ai_2_Card[m].shape.setSize(Vector2f(75, 108));
 			if (Ai_2_Card[m].shape.getPosition().x < 400)
 			{
 				Ai_2_Card[m].shape.move(5, 0);
 			}
-
-
+			else
+			{
+				mode = "UserTurn";
+				UserTurn = true;
+				m = -1;
+				system("pause");
+			}
 		}
-
-
 
 
 		if (LMB())

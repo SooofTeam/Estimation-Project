@@ -24,10 +24,9 @@ int main()
 		gui.SetTextures(Spades, Hearts, Diamonds, Clubs, Background,Cardsholder);
 		vector < vector < pair<int, string>>> Players(4);
 		vector < pair<int, string>> DeckOfCards = Deck.Cards();
-		//srand(time(0));
+		srand(time(0));
 		random_shuffle(DeckOfCards.begin(), DeckOfCards.end());
-		random_shuffle(DeckOfCards.begin(), DeckOfCards.end());
-
+		
 		Deck.Distribute(Players, DeckOfCards);
 		sort(Players[3].rbegin(), Players[3].rend());
 		sort(Players[3].rbegin(), Players[3].rend(),sortbysec);
