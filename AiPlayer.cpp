@@ -180,12 +180,61 @@ int AiPlayer::FinalCall(string trump, vector<pair<int, string>> pc, int Caller, 
 	}*/
 	return Counter;
 }
-void AiPlayer::PlayGround(vector<pair<int, string>> CardOnGround, string Trump, vector<int> &KolElLammat)
+void AiPlayer::PlayGround(vector<pair<int, string>> &CardOnGround, string Trump, vector<int> &KolElLammat, vector<bool>&inHand,vector<int> &lammat)
 {
+	int assign[4] = { -1,-1,-1,-1 };
+	//int maxi = CardOnGround[0].first;
+	bool c=1,t=0,m=1;
+	int mod, it = 0,ity=0;
+	for (int i = 0; i < 4; i++)cout << inHand[i] << " ";
+	while (c) {
+		if (ity == 3) {
+			c = 0;
+		}
+		if (inHand[0])break;
+		if (m) {
+			if (inHand[it]) {
+				mod = it;
+				t = 1;
+				m = 0;
+			}
+		}
+		if (t) {
+			assign[ity] = mod;
+			ity++;
+			mod = (mod + 1) % 4;
+		}
+			it++;
+	}
+	
+	int maxi = CardOnGround[0].first,maxT=-1,iTrump=-1;
+	it = 0;
+	for (int i = 1; i < 4; i++) {
+		if (CardOnGround[i].first > maxi&&CardOnGround[i].second==CardOnGround[0].second) {
+			maxi = CardOnGround[i].first;
+			it = i;
+		}
+	}
+	for (int i = 1; i < 4; i++) {
+		if (CardOnGround[i].second == Trump&&CardOnGround[i].first>maxT) {
+			maxT = CardOnGround[i].first;
+			iTrump = i;
+		}
+	}
+	if (iTrump != -1) {
+		inHand = { 0,0,0,0 };
+		inHand[assign[iTrump]] = 1;
+		lammat[assign[it]]++;
+	}
+	else {
+		inHand = { 0,0,0,0 };
+		inHand[assign[it]] = 1;
+		lammat[assign[it]]++;
+	}
 
 }
 
-pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vector<pair<int, string>> CardsOnGround, string Trump, vector < pair<int, string>>pc, string Status, int &Lammat, int FinalCall, vector<pair<int, int>>&lammaty)
+pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vector<pair<int, string>> CardsOnGround, string Trump, vector < pair<int, string>>&pc, string Status, int &Lammat, int FinalCall, vector<pair<int, int>>&lammaty)
 {
 
 	vector <vector <int>> Shapes(4);
@@ -258,9 +307,10 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 						if (lammaty[i].first == 14) {
 							wara2a.first = 14;
 							wara2a.second = sushi;
-							for (int jk = 0; jk < Shapes[lammaty[i].second].size(); jk++) {
-								if (Shapes[lammaty[i].second][jk] == wara2a.first) {
-									Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin() + jk); break;
+							for (int jk = 0; jk < pc.size(); jk++) {
+								if (pc[jk].first == wara2a.first && pc[jk].second==wara2a.second ) {
+					//				Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin() + jk); break;
+									pc.erase(pc.begin() + jk); break;
 								}
 							}
 							lammaty.erase(lammaty.begin() + i);
@@ -281,22 +331,33 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 								if (Shapes[lammaty[i].second].size() > 2) {
 									wara2a.first = Shapes[lammaty[i].second][Shapes[lammaty[i].second].size() / 2];
 									wara2a.second = sushi;
-									Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin() + Shapes[lammaty[i].second].size() / 2);
+									for (int jk = 0; jk < pc.size(); jk++) {
+										if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+											pc.erase(pc.begin() + jk); break;
+										}
+									}
+						//			Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin() + Shapes[lammaty[i].second].size() / 2);
 								}
 								else {
 									wara2a.first = Shapes[lammaty[i].second][0];
 									wara2a.second = sushi;
-									Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin());
+									for (int jk = 0; jk < pc.size(); jk++) {
+										if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+											pc.erase(pc.begin() + jk); break;
+										}
+									}
+							//		Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin());
 								}
 							}
 							else {
 								wara2a.first = 13;
 								wara2a.second = sushi;
-								for (int jk = 0; jk < Shapes[lammaty[i].second].size(); jk++) {
-									if (Shapes[lammaty[i].second][jk] == wara2a.first) {
-										Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin() + jk); break;
+								for (int jk = 0; jk < pc.size(); jk++) {
+									if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+										pc.erase(pc.begin() + jk); break;
 									}
 								}
+							//			Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin() + jk); break;
 								lammaty.erase(lammaty.begin() + i);
 							}
 							return wara2a;
@@ -325,12 +386,22 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 							for (int kk = 0; kk < lammaty.size(); kk++) {
 								if (lammaty[i].first == Shapes[lammaty[i].second][Shapes[lammaty[i].second].size() / 2]) {
 									wara2a.first = Shapes[lammaty[i].second][Shapes[lammaty[i].second].size() - 1];
-									Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin());
+									for (int jk = 0; jk < pc.size(); jk++) {
+										if (pc[jk].first == wara2a.first && pc[jk].second ==tunas) {
+											pc.erase(pc.begin() + jk); break;
+										}
+									}
+									//		Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin());
 									break;
 								}
 								else if (kk == lammaty.size() - 1) {
 									wara2a.first = Shapes[lammaty[i].second][Shapes[lammaty[i].second].size() / 2];
-									Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin() + Shapes[lammaty[i].second].size() / 2);
+									for (int jk = 0; jk < pc.size(); jk++) {
+										if (pc[jk].first == wara2a.first && pc[jk].second == tunas) {
+											pc.erase(pc.begin() + jk); break;
+										}
+									}
+									//		Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin() + Shapes[lammaty[i].second].size() / 2);
 								}
 							}
 							wara2a.second = tunas;
@@ -338,17 +409,28 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 						else {
 							wara2a.first = Shapes[lammaty[i].second][0];
 							wara2a.second = tunas;
-							Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin());
+							for (int jk = 0; jk < pc.size(); jk++) {
+								if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+									pc.erase(pc.begin() + jk); break;
+								}
+							}
+							//Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin());
 						}
 					}
 					else
 					{
 						wara2a.first = lammaty[i].first;
 						wara2a.second = tunas;
-						Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin() + Shapes[tuna].size() - 1);
+						for (int jk = 0; jk < pc.size(); jk++) {
+							if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+								pc.erase(pc.begin() + jk); break;
+							}
+						}
+						//Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin() + Shapes[tuna].size() - 1);
 						lammaty.erase(lammaty.begin() + i);
 					}
 
+					return wara2a;//Kanet Na2sa
 				}
 
 			}
@@ -379,7 +461,9 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 				}
 				int maxi = -1;
 				bool haseb = 0;
+				
 				for (int kl = 1; kl < CardsOnGround.size(); kl++) {
+					//cout << CardsOnGround[kl].first << " " << CardsOnGround[kl].second << endl;
 					if (CardsOnGround[kl].second == Trump && CardsOnGround[kl].second != CardsOnGround[0].second &&CardsOnGround[kl].first > maxi) {
 						maxi = CardsOnGround[kl].first;
 						haseb = 1;
@@ -396,56 +480,82 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 											biggeT = 1;
 										}
 									}
-									if (biggeT) {
-
+									
+									if (haseb||biggeT) {
 										wara2a.first = Shapes[gro][0];
-										Shapes[gro].erase(Shapes[gro].begin() + 0);
+								//Shapes[gro].erase(Shapes[gro].begin() + 0);
 										CardDeck[(gro * 13) + wara2a.first - 2].first = -1;
 										wara2a.second = gros;
-										return wara2a;
+								for (int jk = 0; jk < pc.size(); jk++) {
+									if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+										pc.erase(pc.begin() + jk); break;
+									}
+								}
+								return wara2a;
 
 									}
-									else if (CardDeck[ik].second == gros && (CardDeck[ik].first > lammaty[x].first || haseb)) {
+									else if (CardDeck[ik].second == gros && CardDeck[ik].first > lammaty[x].first ) {
 
 										if (Shapes[gro].size() > 2) {
 
 											wara2a.first = Shapes[gro][Shapes[gro].size() / 2];
-											Shapes[gro].erase(Shapes[gro].begin() + Shapes[gro].size() / 2);
+					//						Shapes[gro].erase(Shapes[gro].begin() + Shapes[gro].size() / 2);
 											CardDeck[(gro * 13) + wara2a.first - 2].first = -1;
 											wara2a.second = gros;
+											for (int jk = 0; jk < pc.size(); jk++) {
+												if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+													pc.erase(pc.begin() + jk); break;
+												}
+											}
 											return wara2a;
 										}
 										else if (Shapes[gro].size() == 2) {
 
 											wara2a.first = Shapes[gro][0];
-											Shapes[gro].erase(Shapes[gro].begin() + 1);
+						//					Shapes[gro].erase(Shapes[gro].begin() + 1);
 											CardDeck[(gro * 13) + wara2a.first - 2].first = -1;
 											wara2a.second = gros;
+											for (int jk = 0; jk < pc.size(); jk++) {
+												if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+													pc.erase(pc.begin() + jk); break;
+												}
+											}
 											return wara2a;
 										}
 										else {
 
 											wara2a.first = Shapes[gro][0];
-											Shapes[gro].erase(Shapes[gro].begin());
+							//				Shapes[gro].erase(Shapes[gro].begin());
 											CardDeck[(gro * 13) + wara2a.first - 2].first = -1;
 											wara2a.second = gros;
+											for (int jk = 0; jk < pc.size(); jk++) {
+												if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+													pc.erase(pc.begin() + jk); break;
+												}
+											}
 											return wara2a;
 										}
 
 									}
 									else {
+										//cout << "da5al hena\n";
 										wara2a.first = lammaty[x].first;
 										lammaty.erase(lammaty.begin() + x);
 										CardDeck[(gro * 13) + wara2a.first - 2].first = -1;
 										//	Lammat++;
-										for (int jk = 0; jk < Shapes[gro].size(); jk++) {
+										/*for (int jk = 0; jk < Shapes[gro].size(); jk++) {
 											if (Shapes[gro][jk] == wara2a.first) {
-												Shapes[gro].erase(Shapes[gro].begin() + jk); break;
+				//								Shapes[gro].erase(Shapes[gro].begin() + jk); break;
 											}
+										}*/
 											CardDeck[(gro * 13) + wara2a.first - 2].first = -1;
 											wara2a.second = gros;
+											for (int jk = 0; jk < pc.size(); jk++) {
+												if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+													pc.erase(pc.begin() + jk); break;
+												}
+											}
 											return wara2a;
-										}
 									}
 
 
@@ -454,6 +564,11 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 							else if (x == lammaty.size() - 1) {
 								wara2a.first = Shapes[gro][0];
 								wara2a.second = gros;
+								for (int jk = 0; jk < pc.size(); jk++) {
+									if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+										pc.erase(pc.begin() + jk); break;
+									}
+								}
 								return wara2a;
 							}
 							else continue;
@@ -492,7 +607,12 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 						if (el3ab) {
 							wara2a.first = Shapes[tuna][index];
 							wara2a.second = Trump;
-							Shapes[tuna].erase(Shapes[tuna].begin() + index);
+							for (int jk = 0; jk < pc.size(); jk++) {
+								if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+									pc.erase(pc.begin() + jk); break;
+								}
+							}
+							//Shapes[tuna].erase(Shapes[tuna].begin() + index);
 							CardDeck[(tuna * 13) + wara2a.first - 2].first = -1;
 							//	Lammat++;
 						}
@@ -511,10 +631,14 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 							if (indexi == 1) { wara2a.second = "Hearts"; }
 							if (indexi == 2) { wara2a.second = "Diamonds"; }
 							if (indexi == 3) { wara2a.second = "EClubs"; }
-							return wara2a;
-							Shapes[indexi].erase(Shapes[indexi].begin() + 0);
+							for (int jk = 0; jk < pc.size(); jk++) {
+								if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+									pc.erase(pc.begin() + jk); break;
+								}
+							}
+							//Shapes[indexi].erase(Shapes[indexi].begin() + 0);
 							CardDeck[(indexi * 13) + wara2a.first - 2].first = -1;
-
+							return wara2a;
 						}
 					}
 				}
@@ -536,6 +660,11 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 								wara2a.first = Shapes[i][j];
 								wara2a.second = sushi[i];
 								CardDeck[jk].first = -1;
+								for (int ck = 0; ck < pc.size(); ck++) {
+									if (pc[ck].first == wara2a.first && pc[ck].second == wara2a.second) {
+										pc.erase(pc.begin() + ck); break;
+									}
+								}
 								return wara2a;
 							}
 						}
@@ -586,7 +715,12 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 					{
 						wara2a.first = Shapes[gro][i];
 						wara2a.second = gro;
-						Shapes[gro].erase(Shapes[gro].begin() + i);
+						for (int jk = 0; jk < pc.size(); jk++) {
+							if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+								pc.erase(pc.begin() + jk); break;
+							}
+						}
+						//Shapes[gro].erase(Shapes[gro].begin() + i);
 						NotOnGround = false;
 					}
 					else
@@ -603,7 +737,12 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 							{
 								wara2a.first = Shapes[gro][i];
 								wara2a.second = gro;
-								Shapes[gro].erase(Shapes[gro].begin() + i);
+								for (int jk = 0; jk < pc.size(); jk++) {
+									if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+										pc.erase(pc.begin() + jk); break;
+									}
+								}
+							//	Shapes[gro].erase(Shapes[gro].begin() + i);
 								NotInDeck = false;
 								break;
 							}
@@ -615,7 +754,12 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 				{
 					wara2a.first = Shapes[gro][0];
 					wara2a.second = gros;
-					Shapes[gro].erase(Shapes[gro].begin());
+					for (int jk = 0; jk < pc.size(); jk++) {
+						if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+							pc.erase(pc.begin() + jk); break;
+						}
+					}
+				//	Shapes[gro].erase(Shapes[gro].begin());
 					return wara2a;
 				}
 
