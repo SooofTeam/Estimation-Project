@@ -391,9 +391,8 @@ string GUI::TrumpDes(vector<pair<int, string>> Bids, int &Caller, pair<int, stri
 
 
 
-void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interactiveButton Ai_0_Card[14], interactiveButton Ai_1_Card[14], interactiveButton Ai_2_Card[14], Sprite BackGround, interactiveButton RoundDone, Sprite CardsHolder, vector<pair<int, string >> &Bids, vector < vector < pair<int, string>>> Players)
+void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interactiveButton Ai_0_Card[14], interactiveButton Ai_1_Card[14], interactiveButton Ai_2_Card[14], Sprite BackGround, interactiveButton RoundDone, Sprite CardsHolder, vector<pair<int, string >> &Bids, vector < vector < pair<int, string>>> Players, Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15])
 {
-
 	AiPlayer Ai;
 	CardDeck Deck;
 	vector<bool> inHand(4),InHand(4);
@@ -403,9 +402,17 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 	memset(KolElLammat, 0, 4);
 	string status;
 
+	int temppos[4];
+
 	int TotalLammat = 0;
 	string Trump;
 	pair<int, string> UserBid;
+
+	interactiveButton GroundCards[4];
+	for (int i = 0; i < 4; i++)
+	{
+		GroundCards[i].shape.setSize(Vector2f(75, 108));
+	}
 
 	interactiveButton CallNumber[14];
 	interactiveButton CallColor[4];
@@ -783,6 +790,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 				Calls[b] = temp;
 
+				
 				cout << temp << " " << Trump << endl;
 				TotalLammat += temp;
 
@@ -790,13 +798,148 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			}
 		}
 
+		if (mode == "PlayEnding")
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				if (GroundCards[i].TypeAndValue.first == "Spades")
+				{
+					GroundCards[i].normal = Spades[GroundCards[i].TypeAndValue.second];
+				}
+				else if (GroundCards[i].TypeAndValue.first == "Diamonds")
+				{
+					GroundCards[i].normal = Hearts[GroundCards[i].TypeAndValue.second];
+				}
+				else if (GroundCards[i].TypeAndValue.first == "Hearts")
+				{
+					GroundCards[i].normal = Diamonds[GroundCards[i].TypeAndValue.second];
+				}
+				else if (GroundCards[i].TypeAndValue.first == "EClubs")
+				{
+					GroundCards[i].normal = Clubs[GroundCards[i].TypeAndValue.second];
+				}
+				normalize(GroundCards[i]);
+			}
+
+			Ai.PlayGround(OnGround, Trump, Calls, InHand, Lammat);
+
+			mode = "PlayEndingAnimation";
+		}
+		if (mode == "PlayEndingAnimation")
+		{
+			Ai_0_Card[temppos[0]].shape.setSize(Vector2f(0, 0));
+			Ai_1_Card[temppos[1]].shape.setSize(Vector2f(0, 0));
+			Ai_2_Card[temppos[2]].shape.setSize(Vector2f(0, 0));
+			Card[temppos[3]].shape.setSize(Vector2f(0, 0));
+			cout << temppos[3] << endl;
+			if (InHand[0])
+			{
+				cout << "wasal hena INHAND[0]" << endl;
+				if (GroundCards[0].shape.getPosition().x < 855)
+				{
+					GroundCards[0].shape.move(5, 0);
+				}
+				if (GroundCards[1].shape.getPosition().x < 855)
+				{
+					GroundCards[1].shape.move(5, 0);
+				}
+				if (GroundCards[2].shape.getPosition().x < 855)
+				{
+					GroundCards[2].shape.move(5, 0);
+				}
+				if (GroundCards[3].shape.getPosition().x < 855)
+				{
+					GroundCards[3].shape.move(5, 0);
+				}
+				else
+				{
+					mode = "NextPlay";
+				}
+			}
+			if (InHand[1])
+			{
+				cout << "wasal hena INHAND[1]" << endl;
+				if (GroundCards[0].shape.getPosition().y >90)
+				{
+					GroundCards[0].shape.move(0, -5);
+				}
+				if (GroundCards[1].shape.getPosition().y >90)
+				{
+					GroundCards[1].shape.move(0, -5);
+				}
+				if (GroundCards[2].shape.getPosition().y >90)
+				{
+					GroundCards[2].shape.move(0, -5);
+				}
+				if (GroundCards[3].shape.getPosition().y >90)
+				{
+					GroundCards[3].shape.move(0, -5);
+				}
+				else
+				{
+					mode = "NextPlay";
+				}
+
+			}
+			if (InHand[2])
+			{
+				cout << "wasal hena INHAND[2]" << endl;
+
+				if (GroundCards[0].shape.getPosition().x > 145)
+				{
+					GroundCards[0].shape.move(-5, 0);
+				}
+				if (GroundCards[1].shape.getPosition().x > 145)
+				{
+					GroundCards[1].shape.move(-5, 0);
+				}
+				if (GroundCards[2].shape.getPosition().x > 145)
+				{
+					GroundCards[2].shape.move(-5, 0);
+				}
+				if (GroundCards[3].shape.getPosition().x > 145)
+				{
+					GroundCards[3].shape.move(-5, 0);
+				}
+				else
+				{
+					mode = "NextPlay";
+				}
+
+			}
+			if (InHand[3])
+			{
+				cout << "wasal hena INHAND[3]" << endl;
+
+				if (GroundCards[0].shape.getPosition().y < 550)
+				{
+					GroundCards[0].shape.move(0, 5);
+				}
+				if (GroundCards[1].shape.getPosition().y < 550)
+				{
+					GroundCards[1].shape.move(0, 5);
+				}
+				if (GroundCards[2].shape.getPosition().y < 550)
+				{
+					GroundCards[2].shape.move(0, 5);
+				}
+				if (GroundCards[3].shape.getPosition().y < 550)
+				{
+					GroundCards[3].shape.move(0, 5);
+				}
+				else
+				{
+					mode = "NextPlay";
+				}
+
+			}
+		}
+
 		if (mode == "UserTurn" && inHand[3])
 		{
 			for (int f = 0; f < 13; f++)
 			{
-
 				RectButtonAssign(Card[f]);
-
 			}
 			for (int p = 0; p < 13; p++)
 			{
@@ -824,11 +967,14 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			{
 				if (ibuttonAutoHover(Card[p], window))
 				{
+					cout << "E5tyar el User " << endl;
 					pair <int, string> temp;
 					temp.first = Card[p].TypeAndValue.second;
 					temp.second = Card[p].TypeAndValue.first;
 					wara2a = temp;
 					OnGround.push_back(wara2a);
+					GroundCards[OnGround.size()-1].TypeAndValue.first = wara2a.second;
+					GroundCards[OnGround.size()-1].TypeAndValue.second = wara2a.first;
 					m = p;
 					Card[p].Reset();
 					hang();
@@ -842,19 +988,24 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 		if (mode == "UserPlaying")
 		{
-
+			cout << "Animation el User " << endl;
 			if (Card[m].shape.getPosition().y > 290)
 			{
 				Card[m].shape.move(0, -1);
 			}
 			else
 			{
+				GroundCards[OnGround.size()-1].shape.setPosition(Card[m].shape.getPosition());
 				mode = "Player0Turn";
 				 inHand[0] = true;
+				 cout << "M hena b :" << m << endl;
+				 temppos[3] = m;
 				m = -1;
-			}
 			if (OnGround.size() == 4)
-				mode = "RoundEnding";
+			{
+				mode = "PlayEnding";
+			}
+			}
 		}
 
 		if (mode == "Player0Turn" && inHand[0])
@@ -863,6 +1014,8 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 			wara2a = Ai.CardDes(DecksOfCards[0], OnGround, Trump, Players[0], status, Lammat[0], Calls[0], Halemm[0]);
 			OnGround.push_back(wara2a);
+			GroundCards[OnGround.size()-1].TypeAndValue.first = wara2a.second;
+			GroundCards[OnGround.size()-1].TypeAndValue.second = wara2a.first;
 			for (int v = 0; v < 13; v++)
 			{
 				if (Ai_0_Card[v].TypeAndValue.first == wara2a.second && Ai_0_Card[v].TypeAndValue.second == wara2a.first)
@@ -883,12 +1036,14 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			}
 			else
 			{
+				GroundCards[OnGround.size()-1].shape.setPosition(Ai_0_Card[m].shape.getPosition());
 				mode = "Player1Turn";
 				inHand[1] = true;
+				temppos[0] = m;
 				m = -1;
-			}
 			if (OnGround.size() == 4)
-				mode = "RoundEnding";
+				mode = "PlayEnding";
+			}
 		}
 
 		if (mode == "Player1Turn" && inHand[1])
@@ -896,6 +1051,8 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			cout << "Player : 1   ";
 			wara2a = Ai.CardDes(DecksOfCards[1], OnGround, Trump, Players[1], status, Lammat[1], Calls[1], Halemm[1]);
 			OnGround.push_back(wara2a);
+			GroundCards[OnGround.size()-1].TypeAndValue.first = wara2a.second;
+			GroundCards[OnGround.size()-1].TypeAndValue.second = wara2a.first;
 			for (int v = 0; v < 13; v++)
 			{
 				if (Ai_1_Card[v].TypeAndValue.first == wara2a.second && Ai_1_Card[v].TypeAndValue.second == wara2a.first)
@@ -916,12 +1073,14 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			}
 			else
 			{
+				GroundCards[OnGround.size()-1].shape.setPosition(Ai_1_Card[m].shape.getPosition());
 				mode = "Player2Turn";
 				inHand[2] = true;
+				temppos[1] = m;
 				m = -1;
-			}
 			if (OnGround.size() == 4)
-				mode = "RoundEnding";
+				mode = "PlayEnding";
+			}
 		}
 
 		if (mode == "Player2Turn" && inHand[2])
@@ -929,6 +1088,9 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			cout << "Player : 2   ";
 			wara2a = Ai.CardDes(DecksOfCards[2], OnGround, Trump, Players[2], status, Lammat[2], Calls[2], Halemm[2]);
 			OnGround.push_back(wara2a);
+			GroundCards[OnGround.size()-1].TypeAndValue.first = wara2a.second;
+			GroundCards[OnGround.size()-1].TypeAndValue.second = wara2a.first;
+			
 			for (int v = 0; v < 13; v++)
 			{
 				if (Ai_2_Card[v].TypeAndValue.first == wara2a.second && Ai_2_Card[v].TypeAndValue.second == wara2a.first)
@@ -949,29 +1111,195 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			}
 			else
 			{
+				GroundCards[OnGround.size()-1].shape.setPosition(Ai_2_Card[m].shape.getPosition());
 				mode = "UserTurn";
 				inHand[3] = true;
+				temppos[2] = m;
 				m = -1;
-			if (OnGround.size() == 4)
-				mode = "RoundEnding";
+				if (OnGround.size() == 4)
+				{
+				mode = "PlayEnding";
+				}
 			}
 
 
 		}
 
-		if (mode == "RoundEnding")
+		if (mode == "PlayEnding")
 		{
+			for (int i = 0; i < 4; i++)
+			{
+				if (GroundCards[i].TypeAndValue.first == "Spades")
+				{
+					GroundCards[i].normal = Spades[GroundCards[i].TypeAndValue.second];
+				}
+				else if (GroundCards[i].TypeAndValue.first == "Diamonds")
+				{
+					GroundCards[i].normal = Hearts[GroundCards[i].TypeAndValue.second];
+				}
+				else if (GroundCards[i].TypeAndValue.first == "Hearts")
+				{
+					GroundCards[i].normal = Diamonds[GroundCards[i].TypeAndValue.second];
+				}
+				else if (GroundCards[i].TypeAndValue.first == "EClubs")
+				{
+					GroundCards[i].normal = Clubs[GroundCards[i].TypeAndValue.second];
+				}
+				normalize(GroundCards[i]);
+			}
+			
 			Ai.PlayGround(OnGround,Trump,Calls,InHand,Lammat);
 			
-			system("pause");
+			mode = "PlayEndingAnimation";
+		}
+		if (mode == "PlayEndingAnimation")
+		{
+			Ai_0_Card[temppos[0]].shape.setSize(Vector2f(0, 0));
+			Ai_1_Card[temppos[1]].shape.setSize(Vector2f(0, 0));
+			Ai_2_Card[temppos[2]].shape.setSize(Vector2f(0, 0));
+			Card[temppos[3]].shape.setSize(Vector2f(0, 0));
+			cout << temppos[3] << endl;
+			if (InHand[0])
+			{
+				cout << "wasal hena INHAND[0]" << endl;
+				if (GroundCards[0].shape.getPosition().x < 855)
+				{
+					GroundCards[0].shape.move(5, 0);
+				}
+				 if(GroundCards[1].shape.getPosition().x < 855)
+				{
+					GroundCards[1].shape.move(5, 0);
+				}
+				 if (GroundCards[2].shape.getPosition().x < 855)
+				{
+					GroundCards[2].shape.move(5, 0);
+				}
+				 if (GroundCards[3].shape.getPosition().x < 855)
+				{
+					GroundCards[3].shape.move(5, 0);
+				}
+				else
+				{
+					mode = "NextPlay";
+				}
+			}
+			if (InHand[1])
+			{
+				cout << "wasal hena INHAND[1]" << endl;
+				if (GroundCards[0].shape.getPosition().y >90)
+				{
+					GroundCards[0].shape.move(0, -5);
+				}
+				 if (GroundCards[1].shape.getPosition().y >90)
+				{
+					GroundCards[1].shape.move(0, -5);
+				}
+				 if (GroundCards[2].shape.getPosition().y >90)
+				{
+					GroundCards[2].shape.move(0, -5);
+				}
+				 if (GroundCards[3].shape.getPosition().y >90)
+				{
+					GroundCards[3].shape.move(0, -5);
+				}
+				else
+				{
+					mode = "NextPlay";
+				}
+
+			}
+			if (InHand[2])
+			{
+				cout << "wasal hena INHAND[2]" << endl;
+
+				if (GroundCards[0].shape.getPosition().x > 145)
+				{
+					GroundCards[0].shape.move(-5, 0);
+				}
+				 if (GroundCards[1].shape.getPosition().x > 145)
+				{
+					GroundCards[1].shape.move(-5, 0);
+				}
+				 if (GroundCards[2].shape.getPosition().x > 145)
+				{
+					GroundCards[2].shape.move(-5, 0);
+				}
+				 if (GroundCards[3].shape.getPosition().x > 145)
+				{
+					GroundCards[3].shape.move(-5, 0);
+				}
+				else
+				{
+					mode = "NextPlay";
+				}
+
+			}
+			if (InHand[3])
+			{
+				cout << "wasal hena INHAND[3]" << endl;
+
+				if (GroundCards[0].shape.getPosition().y < 550)
+				{
+					GroundCards[0].shape.move( 0 , 5 );
+				}
+				 if (GroundCards[1].shape.getPosition().y < 550)
+				{
+					GroundCards[1].shape.move( 0 , 5 );
+				}
+				 if (GroundCards[2].shape.getPosition().y < 550)
+				{
+					GroundCards[2].shape.move( 0 , 5 );
+				}
+				 if (GroundCards[3].shape.getPosition().y < 550)
+				{
+					GroundCards[3].shape.move( 0 , 5 );
+				}
+				else
+				{
+					mode = "NextPlay";
+				}
+
+			}
+		}
+		if (mode == "NextPlay")
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				inHand[i] = InHand[i];
+			}
+
+			if (inHand[0])
+			{
+				cout << "Winner Player 0";
+				mode = "Player0Turn";
+			}
+			if (inHand[1])
+			{
+				cout << "Winner Player 1";
+				mode = "Player1Turn";
+			}
+			if (inHand[2])
+			{
+				cout << "Winner Player 2";
+				mode = "Player2Turn";
+			}
+			if (inHand[3])
+			{
+				cout << "Winner Player 3";
+				mode = "UserTurn";
+			}
+			OnGround.clear();
+			
+			
 		}
 
-		if (LMB())
-		{
 
+
+		/*if (LMB())
+		{
 			cout << Mouse::getPosition(window).x << " " << Mouse::getPosition(window).y << endl;
 			hang();
-		}
+		}*/
 
 
 		window.clear();
@@ -982,13 +1310,24 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 		window.draw(Avatar2);
 		window.draw(Avatar3);
 		window.draw(shdc);
-		for (int i = 0; i < 13; i++)
+		if (mode == "PlayEndingAnimation")
 		{
-			window.draw(Card[i].shape);
-			window.draw(Ai_0_Card[i].shape);
-			window.draw(Ai_1_Card[i].shape);
-			window.draw(Ai_2_Card[i].shape);
+			for (int i = 0; i < OnGround.size(); i++)
+			{
+				window.draw(GroundCards[i].shape);
+			}
+			for (int i = 0; i < 13; i++)
+				window.draw(Card[i].shape);
 		}
+		else
+			for (int i = 0; i < 13; i++)
+			{
+				window.draw(Card[i].shape);
+				window.draw(Ai_0_Card[i].shape);
+				window.draw(Ai_1_Card[i].shape);
+				window.draw(Ai_2_Card[i].shape);
+			}
+		
 		window.display();
 	}
 
