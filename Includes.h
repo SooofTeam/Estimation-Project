@@ -5,6 +5,7 @@
 #include <queue>
 #include <stack>
 #include <cstdlib>
+#include <stdlib.h>
 #include <functional>
 #include "SFML\Graphics.hpp"
 #include "AiPlayer.h"

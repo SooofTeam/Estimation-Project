@@ -25,23 +25,15 @@ int main()
 	vector < vector < pair<int, string>>> Players(4);
 	vector < pair<int, string>> DeckOfCards = Deck.Cards();
 	//srand(time(0));
-	for (int n = 0;n<4; n++) {
-		random_shuffle(DeckOfCards.begin(), DeckOfCards.end());
-	}
+	for(int i=0;i<5;i++)
+	random_shuffle(DeckOfCards.begin(), DeckOfCards.end());
+	
 	Deck.Distribute(Players, DeckOfCards);
 	sort(Players[3].rbegin(), Players[3].rend());
 	sort(Players[3].rbegin(), Players[3].rend(), sortbysec);
 
 
-	for (int i = 0; i < 3; i++)
-	{
-		for (int j = 0; j < 13; j++)
-		{
-			cout << Players[i][j].first << " " << Players[i][j].second << endl;
-		}
-		cout << endl;
-		cout << endl;
-	}
+	
 
 	vector<pair<int, string >> Bids;
 	vector<pair<int, string >> Calls;
@@ -73,5 +65,5 @@ int main()
 
 	BackGround.setTexture(Background);
 	CardsHolder.setTexture(Cardsholder);
-	gui.ProgramRun(GameWindow, UserCards, AiPlayer_0_Cards, AiPlayer_1_Cards, AiPlayer_2_Cards, BackGround, CurrentRound, CardsHolder, Bids, Players);
+	gui.ProgramRun(GameWindow, UserCards, AiPlayer_0_Cards, AiPlayer_1_Cards, AiPlayer_2_Cards, BackGround, CurrentRound, CardsHolder, Bids, Players,Spades,Diamonds,Hearts,Clubs);
 }
