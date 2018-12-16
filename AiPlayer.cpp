@@ -298,14 +298,40 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 			CardDeck[(i * 13) + Shapes[i][j] - 2].first = -2;
 		}
 	}
+	if (pc.size() == 1)
+	{
+		cout << "wasal hena ... ?(1)" << endl;
+		wara2a = pc[0];
+		for (int jk = 0; jk < pc.size(); jk++) {
+			if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+				pc.erase(pc.begin() + jk); break;
+			}
+		}
+		return wara2a;
+	}
 
 	if (Status == "Over")
 	{
+		cout << "wasal hena ... ?(2)" << endl;
 		//cout << "OVER ";
 		if (Lammat < FinalCall)
 		{
+			cout << "wasal hena ... ?(3)" << endl;
+
 			if (CardsOnGround.empty()) {
-				
+				for (int gg = 0; gg < CardDeck.size(); gg++)
+				{
+					for (int bg = 0; bg < GlobalDeck.size(); bg++)
+					{
+						if (CardDeck[gg].first == GlobalDeck[bg].first && CardDeck[gg].second == GlobalDeck[bg].second)
+						{
+							CardDeck[gg].first = -1;
+							break;
+						}
+					}
+				}
+
+
 				bool LammatFelTrump = true, Hal3abDy = true, bal7a2Nafsy = false, Hal3abElRisk = true, el3abElKing = true, okk2 = true;
 				int tuna;
 				string tunas, sushi;
@@ -444,83 +470,100 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 
 				if (bal7a2Nafsy && lammaty[0].second != tuna)
 				{
+					bool tmam=false;
 					LammatFelTrump = false;
 					if (lammaty[0].second == 0)sushi = "Spades";
 					if (lammaty[0].second == 1)sushi = "Hearts";
 					if (lammaty[0].second == 2)sushi = "Diamonds";
 					if (lammaty[0].second == 3)sushi = "EClubs";
-					int Counter=0;
-					for (int gh = 0; gh < GlobalDeck.size(); gh++)
+					
+					for (int i = 0; i < pc.size(); i++)
 					{
-						if (GlobalDeck[gh].first > lammaty[0].first  && GlobalDeck[gh].second == sushi)
+						if (lammaty[0].first == pc[i].first && sushi == pc[i].second)
 						{
-								Counter++;
-						}
-					}
-					if (Counter == 14 - lammaty[0].first)
-					{
-						for (int i = 1; i < Counter; i++)
-						{
-						CardDeck[((lammaty[0].second + 1) * 13) - i].first = -1;
-						}
-					}
-
-					for (int ik = ((lammaty[0].second + 1) * 13) - 1; ik > (((lammaty[0].second + 1) * 13) - 1) - 13; ik--)
-					{
-						if (lammaty[0].first < CardDeck[ik].first)
-						{
-							Hal3abElRisk = false;
+							tmam = false;
 							break;
 						}
 					}
-					
-					if (Hal3abElRisk)
+					if (tmam)
 					{
-					cout << "dy el moshkela"<< endl;
-					wara2a.first = lammaty[0].first;
-					if (lammaty[0].second == 0)sushi = "Spades";
-					if (lammaty[0].second == 1)sushi = "Hearts";
-					if (lammaty[0].second == 2)sushi = "Diamonds";
-					if (lammaty[0].second == 3)sushi = "EClubs";
-					wara2a.second = sushi;
-					for (int jk = 0; jk < pc.size(); jk++) {
-						if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
-							pc.erase(pc.begin() + jk); break;
+						int Counter = 0;
+						for (int gh = 0; gh < GlobalDeck.size(); gh++)
+						{
+							if (GlobalDeck[gh].first > lammaty[0].first  && GlobalDeck[gh].second == sushi)
+							{
+								Counter++;
+							}
 						}
-					}
-					lammaty.clear();
-					return wara2a;
+						if (Counter == 14 - lammaty[0].first)
+						{
+							for (int i = 1; i < Counter; i++)
+							{
+								CardDeck[((lammaty[0].second + 1) * 13) - i].first = -1;
+							}
+						}
+
+						for (int ik = ((lammaty[0].second + 1) * 13) - 1; ik > (((lammaty[0].second + 1) * 13) - 1) - 13; ik--)
+						{
+							if (lammaty[0].first < CardDeck[ik].first)
+							{
+								Hal3abElRisk = false;
+								break;
+							}
+						}
+
+						if (Hal3abElRisk)
+						{
+							cout << "dy el moshkela" << endl;
+							wara2a.first = lammaty[0].first;
+							if (lammaty[0].second == 0)sushi = "Spades";
+							if (lammaty[0].second == 1)sushi = "Hearts";
+							if (lammaty[0].second == 2)sushi = "Diamonds";
+							if (lammaty[0].second == 3)sushi = "EClubs";
+							wara2a.second = sushi;
+							for (int jk = 0; jk < pc.size(); jk++) {
+								if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+									pc.erase(pc.begin() + jk); break;
+								}
+							}
+							lammaty.clear();
+							return wara2a;
+						}
+						else
+						{
+							if (lammaty[0].second == 0)sushi = "Spades";
+							if (lammaty[0].second == 1)sushi = "Hearts";
+							if (lammaty[0].second == 2)sushi = "Diamonds";
+							if (lammaty[0].second == 3)sushi = "EClubs";
+							if (Shapes[lammaty[0].second].size() > 2) {
+								wara2a.first = Shapes[lammaty[0].second][Shapes[lammaty[0].second].size() / 2];
+								wara2a.second = sushi;
+								for (int jk = 0; jk < pc.size(); jk++) {
+									if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+										pc.erase(pc.begin() + jk); break;
+									}
+								}
+								//			Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin() + Shapes[lammaty[i].second].size() / 2);
+							}
+							else {
+								wara2a.first = Shapes[lammaty[0].second][0];
+								wara2a.second = sushi;
+								for (int jk = 0; jk < pc.size(); jk++) {
+									if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+										pc.erase(pc.begin() + jk); break;
+									}
+								}
+								//		Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin());
+							}
+							lammaty.clear();
+							return wara2a;
+						}
 					}
 					else
 					{
-						if (lammaty[0].second == 0)sushi = "Spades";
-						if (lammaty[0].second == 1)sushi = "Hearts";
-						if (lammaty[0].second == 2)sushi = "Diamonds";
-						if (lammaty[0].second == 3)sushi = "EClubs";
-						if (Shapes[lammaty[0].second].size() > 2) {
-							wara2a.first = Shapes[lammaty[0].second][Shapes[lammaty[0].second].size() / 2];
-							wara2a.second = sushi;
-							for (int jk = 0; jk < pc.size(); jk++) {
-								if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
-									pc.erase(pc.begin() + jk); break;
-								}
-							}
-							//			Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin() + Shapes[lammaty[i].second].size() / 2);
-						}
-						else {
-							wara2a.first = Shapes[lammaty[0].second][0];
-							wara2a.second = sushi;
-							for (int jk = 0; jk < pc.size(); jk++) {
-								if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
-									pc.erase(pc.begin() + jk); break;
-								}
-							}
-							//		Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin());
-						}
 						lammaty.clear();
-						return wara2a;
+						LammatFelTrump = true;
 					}
-
 
 
 				}
@@ -553,6 +596,7 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 											pc.erase(pc.begin() + jk); break;
 										}
 									}
+									lammaty.erase(lammaty.begin() + i);
 									//		Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin());
 									break;
 								}
@@ -563,9 +607,11 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 											pc.erase(pc.begin() + jk); break;
 										}
 									}
+									lammaty.erase(lammaty.begin() + i);
 									//		Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin() + Shapes[lammaty[i].second].size() / 2);
 								}
 							}
+
 							wara2a.second = tunas;
 						}
 						else {
@@ -576,6 +622,7 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 									pc.erase(pc.begin() + jk); break;
 								}
 							}
+							lammaty.erase(lammaty.begin() + i);
 							//Shapes[lammaty[i].second].erase(Shapes[lammaty[i].second].begin());
 						}
 					}
@@ -595,12 +642,34 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 					return wara2a;//Kanet Na2sa
 				}
 
+				if (lammaty.size() == 0 && LammatFelTrump)
+				{
+					pair<int, string> maxinHand;
+					maxinHand.first = pc[0].first;
+					maxinHand.second = pc[0].second;
+					for (int i = 0; i < pc.size(); i++)
+					{
+						if (maxinHand.first < pc[i].first && pc[i].second != Trump)
+						{
+							maxinHand.first = pc[i].first;
+							maxinHand.second = pc[i].second;
+						}
+					}
+					wara2a.first = maxinHand.first;
+					wara2a.second = maxinHand.second;
+					for (int jk = 0; jk < pc.size(); jk++) {
+						if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+							pc.erase(pc.begin() + jk); break;
+						}
+					}
+					return wara2a;
+				}
 			}
-
-
 
 			else if (!CardsOnGround.empty()) {
 				//cout << "mashy eshta tmam " << endl;
+				cout << "wasal hena ... ?(4)" << endl;
+
 				for (int j = 0; j < CardsOnGround.size(); j++) {
 					for (int p = 0; p < CardDeck.size(); p++) {
 						if (CardsOnGround[j] == CardDeck[p]) {
@@ -608,6 +677,7 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 						}
 					}
 				}
+				cout << "wasal hena ... ?(5)" << endl;
 				for (int gg = 0; gg < CardDeck.size(); gg++)
 				{
 					for (int bg = 0; bg < GlobalDeck.size(); bg++)
@@ -619,7 +689,7 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 						}
 					}
 				}
-
+				cout << "wasal hena ... ?(6)" << endl;
 				int gro;
 				string gros;
 
@@ -645,6 +715,7 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 			
 				if (gros == Trump && Shapes[gro].size()==0)
 				{
+					cout << "wasal hena ... ?(7)" << endl;
 				int tuna;
 				if (Trump == "Spades")tuna = 0;
 				if (Trump == "Hearts")tuna = 1;
@@ -730,7 +801,7 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 
 				int maxi = -1;
 				bool haseb = 0;
-				
+				cout << "wasal hena ... ?(8)" << endl;
 				for (int kl = 1; kl < CardsOnGround.size(); kl++) {
 					//cout << CardsOnGround[kl].first << " " << CardsOnGround[kl].second << endl;
 					if (CardsOnGround[kl].second == Trump && CardsOnGround[kl].second != CardsOnGround[0].second &&CardsOnGround[kl].first > maxi) {
@@ -738,11 +809,13 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 						haseb = 1;
 					}
 				}
+				cout << "wasal hena ... ?(9)" << endl;
 				bool biggeT = 0;
 				if (Shapes[gro].size() != 0) {
 					for (int i = 0; i < Shapes[gro].size(); i++) {
 						for (int x = 0; x < lammaty.size(); x++) {
 							if (gro == lammaty[x].second) {
+								cout << "wasal hena ... ?(10)" << endl;
 								for (int ik = ((gro + 1) * 13) - 1; ik >= gro * 13; ik--) {
 									for (int hk = 0; hk < CardsOnGround.size(); hk++) {
 										if (lammaty[x].first < CardsOnGround[hk].first) {
@@ -890,6 +963,7 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 								}
 							}
 							else if (x == lammaty.size() - 1) {
+								cout << "wasal hena ... ?(11)" << endl;
 								wara2a.first = Shapes[gro][0];
 								wara2a.second = gros;
 								for (int jk = 0; jk < pc.size(); jk++) {
@@ -902,6 +976,7 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 								if (wara2a.second == "Hearts")tempooo = 1;
 								if (wara2a.second == "Diamonds")tempooo = 2;
 								if (wara2a.second == "EClubs")tempooo = 3;
+								cout << "wasal hena ... ?(12)" << endl;
 								for (int mj = 0; mj < lammaty.size(); mj++)
 								{
 									if (lammaty[mj].first == wara2a.first && lammaty[mj].second == tempooo)
@@ -909,6 +984,7 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 										lammaty.erase(lammaty.begin() + mj); break;
 									}
 								}
+								cout << "wasal hena ... ?(13)" << endl;
 								return wara2a;
 							}
 							else continue;
@@ -916,6 +992,7 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 						}
 						if (Shapes[gro][i] > maxi)
 						{
+							cout << "wasal hena ... ?(12)" << endl;
 							wara2a.first = Shapes[gro][i];
 							wara2a.second = gros;
 							for (int jk = 0; jk < pc.size(); jk++) {
@@ -939,6 +1016,7 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 						}
 						if (i == Shapes[gro].size() - 1)
 						{
+							cout << "wasal hena ... ?(13)" << endl;
 							wara2a.first = Shapes[gro][0];
 							wara2a.second = gros;
 							for (int jk = 0; jk < pc.size(); jk++) {
@@ -964,6 +1042,7 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 
 				}
 				else {
+					cout << "wasal hena ... ?(14)" << endl;
 					//cout << "AVOID"<<endl;
 					int tuna, index;
 					bool el3ab = true;
@@ -1021,10 +1100,12 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 							return wara2a;
 						}
 						else {
-							int maxi = -1, indexi = -1;
+							int maxi = -1, indexi = -1,tempoz;
 							for (int i = 0; i < Shapes.size(); i++) {
 								if (i != gro && i != tuna) {
-									if (maxi < Shapes[i].size()) {
+									tempoz = Shapes[i].size();
+									if ( maxi < tempoz)
+									{
 										maxi = Shapes[i].size();
 										indexi = i;
 									}
@@ -1064,13 +1145,21 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 				}
 			}
 		}
-
-
-
 		else if(Lammat == FinalCall)
 		{
 			if (CardsOnGround.empty())
 			{
+				for (int gg = 0; gg < CardDeck.size(); gg++)
+				{
+					for (int bg = 0; bg < GlobalDeck.size(); bg++)
+					{
+						if (CardDeck[gg].first == GlobalDeck[bg].first && CardDeck[gg].second == GlobalDeck[bg].second)
+						{
+							CardDeck[gg].first = -1;
+							break;
+						}
+					}
+				}
 				vector<string>sushi(4);
 				sushi[0] = "Spades";
 				sushi[1] = "Hearts";
@@ -1088,23 +1177,30 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 										pc.erase(pc.begin() + ck); break;
 									}
 								}
-								int tempooo;
-								if (wara2a.second == "Spades")tempooo = 0;
-								if (wara2a.second == "Hearts")tempooo = 1;
-								if (wara2a.second == "Diamonds")tempooo = 2;
-								if (wara2a.second == "EClubs")tempooo = 3;
-								for (int mj = 0; mj < lammaty.size(); mj++)
-								{
-									if (lammaty[mj].first == wara2a.first && lammaty[mj].second == tempooo)
-									{
-										lammaty.erase(lammaty.begin() + mj); break;
-									}
-								}
 								return wara2a;
 							}
 						}
 					}
 				}
+				pair<int, string> maxinHand;
+				maxinHand.first = pc[0].first;
+				maxinHand.second = pc[0].second;
+				for (int i = 0; i < pc.size(); i++)
+				{
+					if (maxinHand.first > pc[i].first && pc[i].second != Trump)
+					{
+						maxinHand.first = pc[i].first;
+						maxinHand.second = pc[i].second;
+					}
+				}
+				wara2a.first = maxinHand.first;
+				wara2a.second = maxinHand.second;
+				for (int jk = 0; jk < pc.size(); jk++) {
+					if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+						pc.erase(pc.begin() + jk); break;
+					}
+				}
+				return wara2a;
 			}
 
 			else if (!CardsOnGround.empty())
@@ -1117,6 +1213,18 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 						}
 					}
 				}
+				for (int gg = 0; gg < CardDeck.size(); gg++)
+				{
+					for (int bg = 0; bg < GlobalDeck.size(); bg++)
+					{
+						if (CardDeck[gg].first == GlobalDeck[bg].first && CardDeck[gg].second == GlobalDeck[bg].second)
+						{
+							CardDeck[gg].first = -1;
+							break;
+						}
+					}
+				}
+
 
 				int gro;
 				string gros;
@@ -1276,10 +1384,194 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 
 			}
 		}
-
-		else
+		else // Maniac Mood
 		{
+			int gro,tuna,index; string gros; bool hal3ab=true;
+		
+			if (CardsOnGround.empty())
+			{
+				for (int gg = 0; gg < CardDeck.size(); gg++)
+				{
+					for (int bg = 0; bg < GlobalDeck.size(); bg++)
+					{
+						if (CardDeck[gg].first == GlobalDeck[bg].first && CardDeck[gg].second == GlobalDeck[bg].second)
+						{
+							CardDeck[gg].first = -1;
+							break;
+						}
+					}
+				}
 
+				for (int i = 0; i < pc.size(); i++)
+				{
+					for (int j = 0; j < CardDeck.size(); j++)
+					{
+						if (pc[i].first < CardDeck[j].first && pc[i].second==CardDeck[j].second)
+						{
+							break;
+						}
+						else if (j == CardDeck.size() - 1)
+						{
+							wara2a.first = pc[i].first;
+							wara2a.second = pc[i].second;
+							for (int jk = 0; jk < pc.size(); jk++) {
+								if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+									pc.erase(pc.begin() + jk); break;
+								}
+							}
+							return wara2a;
+						}
+					}
+					int maxi = pc[0].first;
+					string maxiS = pc[0].second;
+					for (int i = 0; i < pc.size(); i++)
+					{
+						if (maxi > pc[i].first)
+						{
+							maxi = pc[i].first;
+							wara2a.first = pc[i].first;
+							wara2a.second = pc[i].second;
+						}
+						if (i == pc.size() - 1)
+						{
+							for (int jk = 0; jk < pc.size(); jk++) {
+								if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+									pc.erase(pc.begin() + jk); break;
+								}
+							}
+							return wara2a;
+						}
+					}
+
+
+				}
+				
+				
+			
+			}
+			
+			else if (!CardsOnGround.empty())
+			{
+				for (int j = 0; j < CardsOnGround.size(); j++) {
+					for (int p = 0; p < CardDeck.size(); p++) {
+						if (CardsOnGround[j] == CardDeck[p]) {
+							CardDeck[p].first = -1;
+						}
+					}
+				}
+				for (int gg = 0; gg < CardDeck.size(); gg++)
+				{
+					for (int bg = 0; bg < GlobalDeck.size(); bg++)
+					{
+						if (CardDeck[gg].first == GlobalDeck[bg].first && CardDeck[gg].second == GlobalDeck[bg].second)
+						{
+							CardDeck[gg].first = -1;
+							break;
+						}
+					}
+				}
+				if (Trump == "Spades")tuna = 0;
+				if (Trump == "Hearts")tuna = 1;
+				if (Trump == "Diamonds")tuna = 2;
+				if (Trump == "EClubs")tuna = 3;
+				if (CardsOnGround[0].second == "Spades") {
+					gro = 0; gros = "Spades";
+				}
+				if (CardsOnGround[0].second == "Hearts") {
+					gro = 1; gros = "Hearts";
+				}
+				if (CardsOnGround[0].second == "Diamonds") {
+					gro = 2; gros = "Diamonds";
+				}
+				if (CardsOnGround[0].second == "EClubs") {
+					gro = 3; gros = "EClubs";
+				}
+				
+				if (Shapes[gro].size() != 0)
+				{
+					for (int i = 0; i < Shapes[gro].size(); i++)
+					{
+						for (int j = ((gro+1)*13)-1; j >(((gro + 1) * 13) - 1)-13 ; j--)
+						{
+							if (CardDeck[j].first > Shapes[gro][i])
+							{
+								hal3ab = false;
+								break;
+							}
+							else
+							{
+								hal3ab = true;
+								index = i;
+							}
+						}
+						if (index == i)
+							break;
+					}
+
+					wara2a.first = Shapes[gro][index];
+					wara2a.second = gros;
+					for (int jk = 0; jk < pc.size(); jk++) {
+						if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+							pc.erase(pc.begin() + jk); break;
+						}
+					}
+					return wara2a;
+				}
+				
+				else if (Shapes[tuna].size() != 0)
+				{
+					for (int i = 0; i < Shapes[tuna].size();i++)
+					{
+						for (int j = 0;  j < CardsOnGround.size(); j++)
+						{
+							if (CardsOnGround[j].second == Trump && Shapes[tuna][j] < CardsOnGround[j].first)
+							{
+								hal3ab = false;
+								break;
+							}
+							else
+							{
+								hal3ab = true;
+								index = i;
+							}
+						}
+						if (index == i)
+							break;
+					}
+					wara2a.first = Shapes[tuna][index];
+					wara2a.second = Trump;
+					for (int jk = 0; jk < pc.size(); jk++) {
+						if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+							pc.erase(pc.begin() + jk); break;
+						}
+					}
+					return wara2a;
+				}
+
+				else
+				{
+					pair<int, string> maxinHand;
+					maxinHand.first = pc[0].first;
+					maxinHand.second = pc[0].second;
+					for (int i = 0; i < pc.size(); i++)
+					{
+						if (maxinHand.first > pc[i].first && pc[i].second != Trump)
+						{
+							maxinHand.first = pc[i].first;
+							maxinHand.second = pc[i].second;
+						}
+					}
+					wara2a.first = maxinHand.first;
+					wara2a.second = maxinHand.second;
+					for (int jk = 0; jk < pc.size(); jk++) {
+						if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+							pc.erase(pc.begin() + jk); break;
+						}
+					}
+					return wara2a;
+				}
+
+			}
 		}
 
 	}
