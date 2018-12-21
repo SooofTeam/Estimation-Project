@@ -20,12 +20,12 @@ int main()
 	gui.SetTextures(Spades, Hearts, Diamonds, Clubs, Background, Cardsholder);
 	vector < vector < pair<int, string>>> Players(4);
 
-	
+
 
 	vector<pair<int, string >> Bids;
 
 	BackGround.setTexture(Background);
 	CardsHolder.setTexture(Cardsholder);
-	
-	gui.ProgramRun(GameWindow, UserCards, AiPlayer_0_Cards, AiPlayer_1_Cards, AiPlayer_2_Cards, BackGround, CardsHolder, Bids, Players,Spades,Diamonds,Hearts,Clubs);
+
+	gui.ProgramRun(GameWindow, UserCards, AiPlayer_0_Cards, AiPlayer_1_Cards, AiPlayer_2_Cards, BackGround, CardsHolder, Bids, Players, Spades, Diamonds, Hearts, Clubs);
 }
