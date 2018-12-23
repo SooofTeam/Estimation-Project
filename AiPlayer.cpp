@@ -252,8 +252,8 @@ void AiPlayer::PlayGround(vector<pair<int, string>> &CardOnGround, string Trump,
 
 pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vector < pair<int, string>> GlobalDeck, vector<pair<int, string>> CardsOnGround, string Trump, vector < pair<int, string>>&pc, string Status, int &Lammat, int FinalCall, vector<pair<int, int>>&lammaty)
 {
-	for (int j = 0; j < lammaty.size(); j++) {
-		for (int i = 0; i < pc.size(); i++) {
+	for (int j = 0; j < lammaty.size();j++) {
+		for (int i = 0; i < pc.size();i++) {
 			if (lammaty[j].first == pc[i].first&&lammaty[j].second == switchString(pc[i].second)) {
 				break;
 			}
@@ -262,7 +262,17 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 			}
 		}
 	}
-
+	for (int gg = 0; gg < CardDeck.size(); gg++)
+	{
+		for (int bg = 0; bg < GlobalDeck.size(); bg++)
+		{
+			if (CardDeck[gg].first == GlobalDeck[bg].first && CardDeck[gg].second == GlobalDeck[bg].second)
+			{
+				CardDeck[gg].first = -1;
+				break;
+			}
+		}
+	}
 	vector <vector <int>> Shapes(4);
 
 	for (auto i : pc) {
@@ -1400,7 +1410,6 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 
 			if (CardsOnGround.empty())
 			{
-				cout << "wasal hena (xz)" << endl;
 				for (int gg = 0; gg < CardDeck.size(); gg++)
 				{
 					for (int bg = 0; bg < GlobalDeck.size(); bg++)
@@ -1412,60 +1421,37 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 						}
 					}
 				}
-
-				for (int i = 0; i < pc.size(); i++)
-				{
-					for (int j = 0; j < CardDeck.size(); j++)
-					{
-						cout << "wasala hena(xg) " << endl;
-						if (pc[i].first < CardDeck[j].first && pc[i].second == CardDeck[j].second)
-						{
-							cout << "wasala hena(xgTmam) " << endl;
+				cout << "hawa\n";
+				pair<int, string> myCard;
+				myCard.first = -1;
+				for (auto j : pc) {
+					for (int oh = 0; oh < CardDeck.size(); oh++) {
+						if (j.first < CardDeck[oh].first&&j.second == CardDeck[oh].second) {
 							break;
 						}
-						else if (j == CardDeck.size() - 1)
-						{
-							cout << "wasala hena(xy) " << endl;
-							wara2a.first = pc[i].first;
-							wara2a.second = pc[i].second;
-							for (int jk = 0; jk < pc.size(); jk++) {
-								if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
-									pc.erase(pc.begin() + jk); break;
-								}
-							}
-							return wara2a;
+						else if (oh == CardDeck.size()) {
+							myCard.first = j.first;
+							myCard.second = j.second;
 						}
 					}
-					cout << "wasal hena (??) " << endl;
-					int maxi = pc[0].first;
-					string maxiS = pc[0].second;
-					for (int i = 0; i < pc.size(); i++)
-					{
-						if (maxi > pc[i].first)
-						{
-							cout << "wasala hena(xx) " << endl;
-							maxi = pc[i].first;
-							maxiS = pc[i].second;
-						}
-						if (i == pc.size() - 1)
-						{
-							wara2a.first = maxi;
-							wara2a.second = maxiS;
-							for (int jk = 0; jk < pc.size(); jk++) {
-								if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
-									pc.erase(pc.begin() + jk); break;
-								}
-							}
-							return wara2a;
-						}
-					}
-
-
 				}
-
-
+				if (myCard.first == -1) {
+					myCard.first = pc[0].first;
+					myCard.second = pc[0].second;
+				}
+				wara2a.first = myCard.first;
+				wara2a.second = myCard.second;
+				for (int jk = 0; jk < pc.size(); jk++) {
+					if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
+						pc.erase(pc.begin() + jk); break;
+					}
+				}
+				return wara2a;
 
 			}
+
+
+
 
 			else if (!CardsOnGround.empty())
 			{
@@ -1487,22 +1473,9 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 						}
 					}
 				}
-				if (Trump == "Spades")tuna = 0;
-				if (Trump == "Hearts")tuna = 1;
-				if (Trump == "Diamonds")tuna = 2;
-				if (Trump == "EClubs")tuna = 3;
-				if (CardsOnGround[0].second == "Spades") {
-					gro = 0; gros = "Spades";
-				}
-				if (CardsOnGround[0].second == "Hearts") {
-					gro = 1; gros = "Hearts";
-				}
-				if (CardsOnGround[0].second == "Diamonds") {
-					gro = 2; gros = "Diamonds";
-				}
-				if (CardsOnGround[0].second == "EClubs") {
-					gro = 3; gros = "EClubs";
-				}
+				tuna = switchString(Trump);
+				gro = switchString(CardsOnGround[0].second);
+				gros = CardsOnGround[0].second;
 
 				if (Shapes[gro].size() != 0)
 				{
@@ -1592,8 +1565,7 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 		}
 
 	}
-
-			else if (Status == "Under")
+	else if (Status == "Under")
 	{
 	//Bashof 3ndy wara2 safe armeeh mn 8er ma asheel walla la2
 	vector < pair<int, int>>safe;
@@ -1606,12 +1578,12 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 				}
 			}
 			if (countingUnders <= 2) {
-				bool okk=false;
+				bool okk = false;
 				for (auto jk : lammaty) {
-					if (Shapes[i][j] == jk.first&&jk.second == i) { okk = true;break; }
+					if (Shapes[i][j] == jk.first&&jk.second == i) { okk = true; break; }
 				}
-				if(!okk)
-				safe.push_back(make_pair(Shapes[i][j], i));
+				if (!okk)
+					safe.push_back(make_pair(Shapes[i][j], i));
 			}
 		}
 	}
@@ -1794,32 +1766,36 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 		if (Lammat >= FinalCall) {
 			if (Lammat == FinalCall) {
 				if (Shapes[tuna].size() == 0) {
-					int ar5amWara2a = -1, minimu = 20, colorr;
-					for (int u = 0; u < 4; u++) {
-						int counterr = 0;
-						if (u == trumpp)continue;
-						for (int p = 0; p < safe.size(); p++) {
-							if (safe[p].second == u) {
-								counterr++;
+					cout << "aloo/n";
+					pair<int, string> ahe;
+					ahe.first = -1;
+					for (auto k : safe) {
+						if (k.second == trumpp) {
+							continue;
+						}
+						else {
+							ahe.first = k.first;
+							ahe.second = switchInt(k.second);
+						}
+					}
+					if (ahe.first == -1) {
+						for (int k = 0; k < 4; k++) {
+							if (k != trumpp) {
+								continue;
+							}
+							else {
+								ahe.first = Shapes[k][0];
+								ahe.second = switchInt(k);
+								break;
 							}
 						}
-						if (counterr < minimu) {
-							minimu = counterr;
-							colorr = u;
+						if (ahe.first == -1) {
+							ahe.first = Shapes[trumpp][0];
+							ahe.second = Trump;
 						}
 					}
-					for (auto u : Shapes[colorr]) {
-						if (u > ar5amWara2a) {
-							ar5amWara2a = u;
-						}
-					}
-					wara2a.first = ar5amWara2a;
-					string yaRab;
-					if (colorr == 0) { yaRab = "Spades"; }
-					if (colorr == 1) { yaRab = "Hearts"; }
-					if (colorr == 2) { yaRab = "Diamonds"; }
-					if (colorr == 3) { yaRab = "EClubs"; }
-					wara2a.second = yaRab;
+					wara2a.first = ahe.first;
+					wara2a.second = ahe.second;
 					for (int jk = 0; jk < pc.size(); jk++) {
 						if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
 							pc.erase(pc.begin() + jk); break;
@@ -1828,6 +1804,7 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 					return wara2a;
 				}
 				else if (Shapes[tuna].size() == 1) {
+					cout << "A5er wara2a\n";
 					wara2a.first = Shapes[tuna][0];
 					wara2a.second = tunas;
 					for (int jk = 0; jk < pc.size(); jk++) {
@@ -1930,11 +1907,9 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 							}
 						}
 					}
-					
-					//El Code ely hayeb3ato Amir;
 					else {
 						pair<int, string> leastCard;
-						leastCard.first = pc[0].first;
+						leastCard.first= pc[0].first;
 						leastCard.second = pc[0].second;
 						for (auto kk : pc) {
 							if (kk.first < leastCard.first) {
@@ -1972,6 +1947,7 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 					return wara2a;
 
 				}
+
 				else {
 					for (auto ik : Shapes[tuna]) {
 						if (ik > maxOnGround) {
@@ -2187,6 +2163,7 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 				}
 				//malosh lammat fel color da
 				if (j == lammaty.size() - 1) {
+					cout << "ha 5osh b2a\n";
 					int kwysAwy = -1;
 					for (int y = 0; y < Shapes[tuna].size(); y++) {
 						if (maxOnGround > Shapes[tuna][y] && Shapes[tuna][y] > kwysAwy) {
@@ -2194,6 +2171,7 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 						}
 					}
 					if (kwysAwy != -1) {
+						cout << " bgd!!\n";
 						wara2a.first = kwysAwy;
 						wara2a.second = tunas;
 						for (int jk = 0; jk < pc.size(); jk++) {
@@ -2460,6 +2438,69 @@ int AiPlayer::switchString(string x) {
 	return k;
 }
 
+int AiPlayer::score(int call, int lammat, bool risk, bool dash, bool trump, bool with, string gameStatus, int numWinners, int numLoosers) {
+	// Win.
+	int score = 0;
+	if (call == lammat) {
+		//Dash
+		if (call == 0) {
+			if (gameStatus == "over") {
+				score += 25;
+			}
+			else {
+				score += 33;
+			}
+		}
+		//Risk
+		if (risk) {
+			score += 10;
+		}
+		//Only winner
+		if (numWinners == 1) {
+			score += 10;
+		}
+		//If Trump or With
+		if (trump || with) {
+			score += 10;
+		}
+		//Main
+		if (call != 0) {
+			score += lammat;
+			score += 10;
+		}
+	}
+
+	//Lose
+	if (call != lammat) {
+		//Dash
+		if (call == 0) {
+			if (gameStatus == "over") {
+				score -= 25;
+			}
+			else {
+				score -= 33;
+			}
+		}
+		//Risk
+		if (risk) {
+			score -= 10;
+		}
+		//Only Loser
+		if (numLoosers == 1) {
+			score -= 10;
+		}
+		//If Trump or With
+		if (trump || with) {
+			score -= 10;
+		}
+		//Main
+		if (call != 0) {
+			int totalLammat = abs(lammat - call);
+			score -= totalLammat;
+		}
+	}
+	return score;
+}
 
 AiPlayer::~AiPlayer()
 {
