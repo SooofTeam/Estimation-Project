@@ -11,6 +11,7 @@
 #include "AiPlayer.h"
 #include "CardDeck.h"
 #include "GUI.h"
+#include <fstream>
 using namespace std;
 using namespace sf;
 
