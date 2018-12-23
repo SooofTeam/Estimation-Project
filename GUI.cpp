@@ -395,7 +395,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 	int KolElLammat[4] = {};
 	memset(KolElLammat, 0, 4);
 	string status;
-
+	int Scores[4] = { 0,0,0,0 };
 	int temppos[4];
 
 	int TotalLammat = 0;
@@ -481,6 +481,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 		if (mode == "RoundSetup")
 		{
 			system("CLS");
+			TotalLammat = 0;
 			HighestBid.first = "";
 			HighestBid.second = "";
 			Bids.clear();
@@ -491,7 +492,8 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 				Lammat[i] = 0;
 			}
 			vector < pair<int, string>> DeckOfCards = Deck.Cards();
-			srand(time(0));
+			//srand(time(0));
+			for(int jb=0;jb<833;jb++)
 			random_shuffle(DeckOfCards.begin(), DeckOfCards.end());
 
 			Deck.Distribute(Players, DeckOfCards);
@@ -548,8 +550,8 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			text.setCharacterSize(15);
 			text.setFillColor(Color::Black);
 			text.Bold;
-			
-			currentCalls[0].setPosition(880,341);
+
+			currentCalls[0].setPosition(880, 341);
 			LammetKam[0].setPosition(850, 341);
 			currentCalls[1].setPosition(640, 71);
 			LammetKam[1].setPosition(610, 71);
@@ -557,7 +559,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			LammetKam[2].setPosition(120, 187);
 			currentCalls[3].setPosition(100, 38);
 			LammetKam[3].setPosition(70, 38);
-			
+
 			for (int t = 0; t < 4; t++)
 			{
 				currentCalls[t].setFont(font);
@@ -748,7 +750,38 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 			}
 		}
+		if (mode == "ScoreCalculation") {
+			bool riskDa = 0,withDa=0;
+			int winners = 0;
+			for (int b = 0; b < 4; b++) {
+				if (Lammat[b] == Calls[b]) {
+					winners++;
+				}
+			}
+			for (int b = Caller, v = 0; v < 4; v++) {
+				riskDa = 0; withDa = 0;
+				if (v == 0) {
+					Scores[b] += Ai.score(Calls[b], Lammat[b], false, false, true, false, status, winners, 4 - winners); continue;
+					}
+				if (Lammat[b] == Lammat[Caller]) { withDa = 1; }
+				if (v == 3) {
+					if (abs(13 - TotalLammat) >= 2) { riskDa = 1; }
+				}
+				
+					Scores[b]+=Ai.score(Calls[b], Lammat[b], riskDa, false, false, withDa, status, winners, 4 - winners);
+					b = (b + 1) % 4;
 
+			}
+			ofstream writing;
+			writing.open("Scores.txt",ios::app);
+			for (int b = 0; b < 4; b++) {
+				writing << Scores[b] << " ";
+			}
+			writing << endl;
+			writing.close();
+			mode = "RoundSetup";
+
+		}
 		if (mode == "BeforeFinalCalling")
 		{
 			int v;
@@ -803,7 +836,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 						}
 
 
-						for (int c = 0; c <=maximum; c++)
+						for (int c = 0; c <= maximum; c++)
 						{
 							if (ibuttonAutoHover(CallNumber[c], CallingWindow2))
 							{
@@ -813,7 +846,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 							}
 						}
 
-						for (int c = 0; c <=maximum; c++)
+						for (int c = 0; c <= maximum; c++)
 						{
 							if (checkCallNumber[c])
 							{
@@ -847,7 +880,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 						CallingWindow2.clear();
 						CallingWindow2.draw(callingwindow);
 						CallingWindow2.draw(text);
-						for (int c = 0; c <=maximum; c++)
+						for (int c = 0; c <= maximum; c++)
 						{
 							CallingWindow2.draw(CallNumber[c].shape);
 						}
@@ -874,7 +907,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 					TotalLammat += temp;
 
 					Calls[b] = temp;
-					currentCalls[b].setString("/"+to_string(temp));
+					currentCalls[b].setString("/" + to_string(temp));
 					for (int i = 0; i < 4; i++)
 					{
 						LammetKam[i].setString("0");
@@ -965,7 +998,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 				else
 				{
 					if (Players[0].size() == 0)
-						mode = "RoundSetup";
+						mode = "ScoreCalculation";
 					else
 						mode = "NextPlay";
 				}
@@ -991,7 +1024,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 				else
 				{
 					if (Players[0].size() == 0)
-						mode = "RoundSetup";
+						mode = "ScoreCalculation";
 					else
 						mode = "NextPlay";
 
@@ -1020,7 +1053,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 				else
 				{
 					if (Players[0].size() == 0)
-						mode = "RoundSetup";
+						mode = "ScoreCalculation";
 					else
 						mode = "NextPlay";
 
@@ -1049,7 +1082,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 				else
 				{
 					if (Players[0].size() == 0)
-						mode = "RoundSetup";
+						mode = "ScoreCalculation";
 					else
 						mode = "NextPlay";
 				}
