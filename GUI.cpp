@@ -427,8 +427,19 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 	Sprite shdc;
 	Texture CallingWindow;
 	Texture ScoreBoardWindowT;
+	Texture TrumpPhotoT[4];
+	TrumpPhotoT[0].loadFromFile("CardsTextures/TrumpS.png");
+	TrumpPhotoT[1].loadFromFile("CardsTextures/TrumpH.png");
+	TrumpPhotoT[2].loadFromFile("CardsTextures/TrumpD.png");
+	TrumpPhotoT[3].loadFromFile("CardsTextures/TrumpC.png");
 	Sprite callingwindow;
 	Sprite callingwindow2;
+	Sprite TrumpPhoto[4];
+	for (int i = 0; i < 4; i++)
+	{
+		TrumpPhoto[i].setTexture(TrumpPhotoT[i]);
+		TrumpPhoto[i].setPosition(800, 30);
+	}
 
 	GameDesignSetUp(avatar1, Avatar1, avatar2, Avatar2, avatar3, Avatar3, SHDC, shdc, CallingWindow, callingwindow, callingwindow2, CallNumber, CallColor, Choice);
 
@@ -438,13 +449,14 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 	ScoreBoardWindow.normal = ScoreBoardWindowT;
 	normalize(ScoreBoardWindow);
 	ScoreBoardWindow.shape.setSize(Vector2f( 100,100 ));
-	ScoreBoardWindow.shape.setPosition(Vector2f(817, 27));
+	ScoreBoardWindow.shape.setPosition(Vector2f(900, 0));
 	RectButtonAssign2(ScoreBoardWindow);
 
 	Text text;
 	Font font;
 	Text currentCalls[4];
 	Text LammetKam[4];
+	Text StatusWriter;
 	pair<string, string> HighestBid;
 
 	int maximum;
@@ -500,10 +512,13 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			HighestBid.first = "";
 			HighestBid.second = "";
 			Bids.clear();
+			status = "";
 			DecksOfCards[3].clear();
 			OnGround.clear();
 			for (int i = 0; i < 4; i++)
 			{
+				InHand[i] = 0;
+				inHand[i] = 0;
 				Lammat[i] = 0;
 			}
 			vector < pair<int, string>> DeckOfCards = Deck.Cards();
@@ -575,6 +590,11 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			currentCalls[3].setPosition(100, 38);
 			LammetKam[3].setPosition(70, 38);
 
+			StatusWriter.setPosition(800, 80);
+			StatusWriter.setFont(font);
+			StatusWriter.setCharacterSize(25);
+			StatusWriter.Bold;
+			StatusWriter.setFillColor(Color::Black);
 			for (int t = 0; t < 4; t++)
 			{
 				currentCalls[t].setFont(font);
@@ -683,7 +703,6 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 					{
 						CallNumber[c].shape.setTexture(&CallNumber[c].clicked);
 						UserBid.first = CallNumber[c].TypeAndValue.second;
-
 					}
 				}
 
@@ -722,6 +741,11 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 							mode = "BeforeFinalCalling";
 							Bids.push_back(UserBid);
 							Trump = TrumpDes(Bids, Caller, UserBid);
+							//Hena Code el Sewar
+							//
+							//
+							//
+							//Hena Code el Sewar
 							if (maximum < UserBid.first)
 								maximum = UserBid.first;
 							CallingWindow1.close();
@@ -734,6 +758,11 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 							mode = "BeforeFinalCalling";
 							Bids.push_back(UserBid);
 							Trump = TrumpDes(Bids, Caller, UserBid);
+							//Hena Code el Sewar
+							//
+							//
+							//
+							//Hena Code el Sewar
 							if (maximum < UserBid.first)
 								maximum = UserBid.first;
 							CallingWindow1.close();
@@ -778,7 +807,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			for (int b = Caller, v = 0; v < 4; v++) {
 				riskDa = 0; withDa = 0;
 				if (v == 0) {
-					Scores[b] += Ai.score(Calls[b], Lammat[b], false, false, true, false, status, winners, 4 - winners); continue;
+					Scores[b] += Ai.score(Calls[b], Lammat[b], false, false, true, false, status, winners, 4 - winners); b = (b + 1) % 4; continue;
 					}
 				if (Lammat[b] == Lammat[Caller]) { withDa = 1; }
 				if (v == 3) {
@@ -831,13 +860,19 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 		if (mode == "FinalCalling")
 		{
+			bool wasal = false;
 			RenderWindow CallingWindow2(VideoMode(502, 325), "Estimation", Style::Close | Style::Resize);
 
-			for (int c = 0, b = Caller; c < 4; c++)
+			for (int gh = 0, b = Caller; gh < 4; gh++)
 			{
+				cout << "(GH) : " << gh << " " << "(B) :"<<b << endl;
+				
 				int temp = 0;
-				if (b == 3)//User Final Call
+
+				if (b == 3 && !wasal)//User Final Call
 				{
+					wasal = true;
+					cout << "wasal lel User Call , wel (gh) = " << gh << endl;
 					while (CallingWindow2.isOpen())
 					{
 						Event E;
@@ -853,41 +888,70 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 							}
 						}
 
-
-						for (int c = 0; c <= maximum; c++)
+						if (Caller == 3)
 						{
-							if (ibuttonAutoHover(CallNumber[c], CallingWindow2))
+							for (int c = maximum; c <= 13; c++)
 							{
-								finalcall = true;
-								memset(checkCallNumber, 0, 14);
-								checkCallNumber[c] = 1;
+								if (ibuttonAutoHover(CallNumber[c], CallingWindow2))
+								{
+									finalcall = true;
+									memset(checkCallNumber, 0, 14);
+									checkCallNumber[c] = 1;
+								}
+							}
+
+							for (int c = maximum; c <= 13; c++)
+							{
+								if (checkCallNumber[c])
+								{
+									CallNumber[c].shape.setTexture(&CallNumber[c].clicked);
+									UserBid.first = CallNumber[c].TypeAndValue.second;
+								}
 							}
 						}
-
-						for (int c = 0; c <= maximum; c++)
+						else
 						{
-							if (checkCallNumber[c])
+							for (int c = 0; c <= maximum; c++)
 							{
-								CallNumber[c].shape.setTexture(&CallNumber[c].clicked);
-								UserBid.first = CallNumber[c].TypeAndValue.second;
+								if (ibuttonAutoHover(CallNumber[c], CallingWindow2))
+								{
+									finalcall = true;
+									memset(checkCallNumber, 0, 14);
+									checkCallNumber[c] = 1;
+								}
+							}
 
+							for (int c = 0; c <= maximum; c++)
+							{
+								if (checkCallNumber[c])
+								{
+									CallNumber[c].shape.setTexture(&CallNumber[c].clicked);
+									UserBid.first = CallNumber[c].TypeAndValue.second;
+								}
 							}
 						}
-
 						if (ibuttonAutoHover(Choice[1], CallingWindow2) && finalcall)
 						{
 							TotalLammat += UserBid.first;
 							Calls[b] = UserBid.first;
-							cout << " el b hena : " << b;
-
-							if (c != 3 && b != 3)
+							
+							if (gh != 3 && b == 3)
+							{
 								b = (b + 1) % 4;
+							}
+							else
+							{
+								(TotalLammat > 13) ? status = "Over" : status = "Under";
+								cout << "Status :" << status << endl;
+							}
 							CallingWindow2.close();
 							if (Caller == 0) { mode = "Player0Turn"; inHand[0] = 1; InHand[0] = 1; }
 							else if (Caller == 1) { mode = "Player1Turn"; inHand[1] = 1; InHand[1] = 1; }
 							else if (Caller == 2) { mode = "Player2Turn"; inHand[2] = 1; InHand[2] = 1; }
 							else if (Caller == 3) { mode = "UserTurn"; inHand[3] = 1; InHand[3] = 1; }
+
 							currentCalls[3].setString("/" + to_string(UserBid.first));
+
 							for (int i = 0; i < 4; i++)
 							{
 								LammetKam[i].setString("0");
@@ -898,14 +962,34 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 						CallingWindow2.clear();
 						CallingWindow2.draw(callingwindow);
 						CallingWindow2.draw(text);
-						for (int c = 0; c <= maximum; c++)
+						if (Caller == 3)
 						{
-							CallingWindow2.draw(CallNumber[c].shape);
-						}
 
-						for (int c = 0; c <= 3; c++)
+							for (int c = maximum; c <= 13; c++)
+							{
+								
+								CallingWindow2.draw(CallNumber[c].shape);
+							}
+
+							for (int c = 0; c <= 3; c++)
+							{
+								CallingWindow2.draw(CallColor[c].shape);
+							}
+						}
+						else
 						{
-							CallingWindow2.draw(CallColor[c].shape);
+							for (int c = 0; c <= maximum; c++)
+							{
+								if (abs(TotalLammat - 13) == c)
+									continue;
+								CallingWindow2.draw(CallNumber[c].shape);
+							}
+
+							for (int c = 0; c <= 3; c++)
+							{
+								CallingWindow2.draw(CallColor[c].shape);
+							}
+
 						}
 
 						CallingWindow2.draw(Choice[1].shape);
@@ -913,45 +997,49 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 						CallingWindow2.display();
 
 					}
+					continue;
 				}
-				if (c == 3 && b == 3)
+				
+				
+				if (gh == 3 && b != 3)
 				{
-					(TotalLammat > 13) ? status = "Over" : status = "Under";
-					break;
-				}
-				if (c == 3 && b != 3)
-				{
+					cout << "Wasal le a5er caller , wel (gh) =" << gh << endl;
 					temp = Ai.FinalCall(Trump, Players[b], -1, TotalLammat, Halemm[b]);
 					TotalLammat += temp;
-
 					Calls[b] = temp;
-					currentCalls[b].setString("/" + to_string(temp));
+
+					cout <<"TEMP : " << temp << endl;
+					
+					currentCalls[b].setString(" / "+to_string(temp));
+					
+					(TotalLammat > 13) ? status = "Over" : status = "Under";
+					cout << "Status :" << status << endl;
+
+
 					for (int i = 0; i < 4; i++)
 					{
 						LammetKam[i].setString("0");
 					}
-					cout << " el b hena : " << b;
-
+					
 					if (finalcall)
 					{
-						if (Caller == 0) { mode = "Player0Turn"; inHand[0] = 1; }
-						else if (Caller == 1) { mode = "Player1Turn"; inHand[1] = 1; }
-						else if (Caller == 2) { mode = "Player2Turn"; inHand[2] = 1; }
-						else if (Caller == 3) { mode = "UserTurn"; inHand[3] = 1; }
-
+						if (Caller == 0) { mode = "Player0Turn"; inHand[0] = 1; InHand[0] = 1; }
+						else if (Caller == 1) { mode = "Player1Turn"; inHand[1] = 1; InHand[1] = 1; }
+						else if (Caller == 2) { mode = "Player2Turn"; inHand[2] = 1; InHand[2] = 1; }
+						else if (Caller == 3) { mode = "UserTurn"; inHand[3] = 1; InHand[3] = 1; }	
 					}
-					(TotalLammat > 13) ? status = "Over" : status = "Under";
-
 
 					break;
 				}
-				temp = Ai.FinalCall(Trump, Players[b], b, TotalLammat, Halemm[b]);
-				Calls[b] = temp;
-				currentCalls[b].setString("/" + to_string(temp));
-				cout << " el b hena : " << b;
-				TotalLammat += temp;
+				else if (b != 3 )
+				{
+					temp = Ai.FinalCall(Trump, Players[b], b, TotalLammat, Halemm[b]);
+					Calls[b] = temp;
+					currentCalls[b].setString("/" + to_string(temp));
+					TotalLammat += temp;
 
-				b = (b + 1) % 4;
+					b = (b + 1) % 4;
+				}
 			}
 		}
 
@@ -1111,56 +1199,145 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 		if (mode == "UserTurn" && inHand[3])
 		{
+
+			int tempo;
+
+			vector <vector <int>> Shapes(4);
+			for (auto i : Players[3])
+			{
+
+				if (i.second == "Spades")
+				{
+					Shapes[0].push_back(i.first);
+				}
+				if (i.second == "Hearts")
+				{
+					Shapes[1].push_back(i.first);
+				}
+				if (i.second == "Diamonds")
+				{
+					Shapes[2].push_back(i.first);
+				}
+
+				if (i.second == "EClubs")
+				{
+					Shapes[3].push_back(i.first);
+				}
+			}
+			if (!OnGround.empty())
+				tempo = Ai.switchString(OnGround[0].second);
+
 			for (int f = 0; f < 13; f++)
 			{
-				RectButtonAssign(Card[f]);
+				if (!OnGround.empty() && Shapes[tempo].size() != 0)
+				{
+					if (Card[f].TypeAndValue.first == OnGround[0].second)
+						RectButtonAssign(Card[f]);
+				}
+				else
+				{
+					RectButtonAssign(Card[f]);
+				}
 			}
 			for (int p = 0; p < 13; p++)
 			{
 
-				if (isButtonHovered(Card[p], window))
+				if (!OnGround.empty() && Shapes[tempo].size() != 0)
 				{
-					if (ishovered[p] == 0)
+					if (Card[p].TypeAndValue.first == OnGround[0].second && isButtonHovered(Card[p], window))
 					{
-						ishovered[p] = 1;
-						Card[p].shape.move(0, -20);
+						if (ishovered[p] == 0)
+						{
+							ishovered[p] = 1;
+							Card[p].shape.move(0, -20);
+						}
+					}
+					else
+					{
+						if (ishovered[p] == 1)
+						{
+							ishovered[p] = 0;
+							Card[p].shape.move(0, 20);
+						}
+
 					}
 				}
 				else
 				{
-					if (ishovered[p] == 1)
+					if (isButtonHovered(Card[p], window))
 					{
-						ishovered[p] = 0;
-						Card[p].shape.move(0, 20);
+						if (ishovered[p] == 0)
+						{
+							ishovered[p] = 1;
+							Card[p].shape.move(0, -20);
+						}
 					}
+					else
+					{
+						if (ishovered[p] == 1)
+						{
+							ishovered[p] = 0;
+							Card[p].shape.move(0, 20);
+						}
 
+					}
 				}
 			}
 
 			for (int p = 0; p < 13; p++)
 			{
-				if (ibuttonAutoHover(Card[p], window))
+				if (!OnGround.empty() && Shapes[tempo].size() != 0)
 				{
-					pair <int, string> temp;
-					temp.first = Card[p].TypeAndValue.second;
-					temp.second = Card[p].TypeAndValue.first;
-					wara2a = temp;
-					OnGround.push_back(wara2a);
-					for (int i = 0; i < Players[3].size(); i++)
+					if (Card[p].TypeAndValue.first == OnGround[0].second && ibuttonAutoHover(Card[p], window))
 					{
-						if (Players[3][i].first == wara2a.first &&Players[3][i].second == wara2a.second)
+						pair <int, string> temp;
+						temp.first = Card[p].TypeAndValue.second;
+						temp.second = Card[p].TypeAndValue.first;
+						wara2a = temp;
+						OnGround.push_back(wara2a);
+						for (int i = 0; i < Players[3].size(); i++)
 						{
-							Players[3].erase(Players[3].begin() + i);
+							if (Players[3][i].first == wara2a.first &&Players[3][i].second == wara2a.second)
+							{
+								Players[3].erase(Players[3].begin() + i);
+							}
 						}
+						GroundCards[OnGround.size() - 1].TypeAndValue.first = wara2a.second;
+						GroundCards[OnGround.size() - 1].TypeAndValue.second = wara2a.first;
+						m = p;
+						Card[p].Reset();
+						hang();
+						mode = "UserPlaying";
+						Card[m].shape.setPosition(Vector2f(477, 447));
+						break;
 					}
-					GroundCards[OnGround.size() - 1].TypeAndValue.first = wara2a.second;
-					GroundCards[OnGround.size() - 1].TypeAndValue.second = wara2a.first;
-					m = p;
-					Card[p].Reset();
-					hang();
-					mode = "UserPlaying";
-					Card[m].shape.setPosition(Vector2f(477, 447));
-					break;
+				}
+				else
+				{
+					if (ibuttonAutoHover(Card[p], window))
+					{
+						pair <int, string> temp;
+						temp.first = Card[p].TypeAndValue.second;
+						temp.second = Card[p].TypeAndValue.first;
+						wara2a = temp;
+						OnGround.push_back(wara2a);
+						for (int i = 0; i < Players[3].size(); i++)
+						{
+							if (Players[3][i].first == wara2a.first &&Players[3][i].second == wara2a.second)
+							{
+								Players[3].erase(Players[3].begin() + i);
+							}
+						}
+						GroundCards[OnGround.size() - 1].TypeAndValue.first = wara2a.second;
+						GroundCards[OnGround.size() - 1].TypeAndValue.second = wara2a.first;
+						m = p;
+						Card[p].Reset();
+						hang();
+						mode = "UserPlaying";
+						Card[m].shape.setPosition(Vector2f(477, 447));
+						break;
+					}
+
 				}
 			}
 
@@ -1443,8 +1620,23 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 		window.draw(Avatar3);
 		window.draw(shdc);
 		window.draw(ScoreBoardWindow.shape);
+		if (Trump != "")
+		{
+		int x = Ai.switchString(Trump);
+		window.draw(TrumpPhoto[x]);
+		}
+		if (status != "")
+		{
+			if (status == "Over")
+				StatusWriter.setString(" + " + to_string(abs(TotalLammat - 13)));
+			else
+				StatusWriter.setString(" - " + to_string(abs(TotalLammat - 13)));
+
+			window.draw(StatusWriter);
+		}
 		for (int i = 0; i < 4; i++)
 		{
+
 			window.draw(currentCalls[i]);
 			window.draw(LammetKam[i]);
 		}
@@ -1458,6 +1650,8 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 				window.draw(Card[i].shape);
 		}
 		else
+		{
+
 			for (int i = 0; i < 13; i++)
 			{
 				window.draw(Card[i].shape);
@@ -1465,7 +1659,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 				window.draw(Ai_1_Card[i].shape);
 				window.draw(Ai_2_Card[i].shape);
 			}
-
+		}
 		window.display();
 	}
 

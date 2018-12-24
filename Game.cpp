@@ -39,7 +39,7 @@ int main()
 	CardsHolder.setTexture(Cardsholder);
 	MainMenuBackground.setTexture(MainMenuBackgroundT);
 	MainMenuBackground.setPosition(0, 0);
-					string name;
+	string name;
 	while (MainMenu.isOpen())
 	{
 		Event E;

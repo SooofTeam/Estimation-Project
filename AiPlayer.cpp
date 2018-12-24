@@ -1406,7 +1406,7 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 		}
 		else // Maniac Mood
 		{
-			int gro, tuna, index; string gros; bool hal3ab = true;
+			int gro, tuna, index=-1; string gros; bool hal3ab = true;
 
 			if (CardsOnGround.empty())
 			{
@@ -1494,8 +1494,11 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 								index = i;
 							}
 						}
-						if (index == i)
-							break;
+						if (index == -1)
+						{
+							index = i;
+						}
+						
 					}
 
 					wara2a.first = Shapes[gro][index];
@@ -1567,6 +1570,44 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 	}
 	else if (Status == "Under")
 	{
+		cout << "wasal hena Under... ?(2)" << endl;
+		if (lammaty.size() == 0)
+		{
+			cout << "wasalt lel riskat";
+			int iMaxinHandString;
+			pair<int, int> maxinHand;
+			if (pc[0].second == "Spades")iMaxinHandString = 0;
+			if (pc[0].second == "Diamonds")iMaxinHandString = 1;
+			if (pc[0].second == "Hearts")iMaxinHandString = 2;
+			if (pc[0].second == "EClubs")iMaxinHandString = 3;
+			maxinHand.first = pc[0].first;
+			maxinHand.second = iMaxinHandString;
+			for (int i = 0; i < pc.size(); i++)
+			{
+				if (maxinHand.first < pc[i].first && pc[i].second != Trump)
+				{
+					maxinHand.first = pc[i].first;
+					if (pc[i].second == "Spades")iMaxinHandString = 0;
+					if (pc[i].second == "Hearts")iMaxinHandString = 1;
+					if (pc[i].second == "Diamonds")iMaxinHandString = 2;
+					if (pc[i].second == "EClubs")iMaxinHandString = 3;
+					maxinHand.second = iMaxinHandString;
+				}
+			}
+			for (int i = 0; i < pc.size(); i++)
+			{
+				if (pc[i].second == Trump)
+				{
+					maxinHand.first = pc[i].first;
+					if (pc[i].second == "Spades")iMaxinHandString = 0;
+					if (pc[i].second == "Hearts")iMaxinHandString = 1;
+					if (pc[i].second == "Diamonds")iMaxinHandString = 2;
+					if (pc[i].second == "EClubs")iMaxinHandString = 3;
+					maxinHand.second = iMaxinHandString;
+				}
+			}
+			lammaty.push_back(maxinHand);
+		}
 	//Bashof 3ndy wara2 safe armeeh mn 8er ma asheel walla la2
 	vector < pair<int, int>>safe;
 	for (int i = 0; i < Shapes.size(); i++) {
@@ -1767,35 +1808,20 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 			if (Lammat == FinalCall) {
 				if (Shapes[tuna].size() == 0) {
 					cout << "aloo/n";
-					pair<int, string> ahe;
-					ahe.first = -1;
-					for (auto k : safe) {
-						if (k.second == trumpp) {
-							continue;
-						}
-						else {
-							ahe.first = k.first;
-							ahe.second = switchInt(k.second);
+					pair<int, string> akbar7aga;
+					akbar7aga.first = -1;
+					for (auto jk : pc) {
+						if (jk.first > akbar7aga.first&&jk.second != Trump) {
+							akbar7aga.first = jk.first;
+							akbar7aga.second == jk.second;
 						}
 					}
-					if (ahe.first == -1) {
-						for (int k = 0; k < 4; k++) {
-							if (k != trumpp) {
-								continue;
-							}
-							else {
-								ahe.first = Shapes[k][0];
-								ahe.second = switchInt(k);
-								break;
-							}
-						}
-						if (ahe.first == -1) {
-							ahe.first = Shapes[trumpp][0];
-							ahe.second = Trump;
-						}
+					if (akbar7aga.first == -1) {
+						akbar7aga.first = pc[0].first;
+						akbar7aga.second = pc[0].second;
 					}
-					wara2a.first = ahe.first;
-					wara2a.second = ahe.second;
+					wara2a.first = akbar7aga.first;
+					wara2a.second = akbar7aga.second;
 					for (int jk = 0; jk < pc.size(); jk++) {
 						if (pc[jk].first == wara2a.first && pc[jk].second == wara2a.second) {
 							pc.erase(pc.begin() + jk); break;
@@ -2445,7 +2471,7 @@ int AiPlayer::score(int call, int lammat, bool risk, bool dash, bool trump, bool
 	if (call == lammat) {
 		//Dash
 		if (call == 0) {
-			if (gameStatus == "over") {
+			if (gameStatus == "Over") {
 				score += 25;
 			}
 			else {
@@ -2475,7 +2501,7 @@ int AiPlayer::score(int call, int lammat, bool risk, bool dash, bool trump, bool
 	if (call != lammat) {
 		//Dash
 		if (call == 0) {
-			if (gameStatus == "over") {
+			if (gameStatus == "Over") {
 				score -= 25;
 			}
 			else {
