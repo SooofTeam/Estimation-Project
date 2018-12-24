@@ -24,11 +24,12 @@ class GUI
 public:
 	int Caller = -1;
 	GUI();
-	void ProgramRun(RenderWindow &window, interactiveButton Card[14], interactiveButton Ai_0_Card[14], interactiveButton Ai_1_Card[14], interactiveButton Ai_2_Card[14], Sprite BackGround, Sprite CardsHolder, vector<pair<int, string >> &Bids, vector < vector < pair<int, string>>> Players, Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15]);
+	void ProgramRun(RenderWindow &window, interactiveButton Card[14], interactiveButton Ai_0_Card[14], interactiveButton Ai_1_Card[14], interactiveButton Ai_2_Card[14], Sprite BackGround, Sprite CardsHolder, vector<pair<int, string >> &Bids, vector < vector < pair<int, string>>> Players, Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15], string UserName);
 	void SetTextures(Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15], Texture &Background, Texture &CardsHolder);
 	void PlayerCardsSetup(vector < pair<int, string>> Players, interactiveButton Card[14], Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15]);
 	void normalize(interactiveButton &ib);
 	void RectButtonAssign(interactiveButton &ib);
+	void RectButtonAssign2(interactiveButton &ib);
 	bool isButtonHovered(interactiveButton ib, RenderWindow &window);
 	bool LMB();
 	bool ibuttonAutoHover(interactiveButton &ib, sf::RenderWindow &window);

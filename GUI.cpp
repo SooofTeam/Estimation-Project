@@ -385,8 +385,11 @@ string GUI::TrumpDes(vector<pair<int, string>> Bids, int &Caller, pair<int, stri
 	return max.second;
 }
 
-void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interactiveButton Ai_0_Card[14], interactiveButton Ai_1_Card[14], interactiveButton Ai_2_Card[14], Sprite BackGround, Sprite CardsHolder, vector<pair<int, string >> &Bids, vector < vector < pair<int, string>>> Players, Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15])
+void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interactiveButton Ai_0_Card[14], interactiveButton Ai_1_Card[14], interactiveButton Ai_2_Card[14], Sprite BackGround, Sprite CardsHolder, vector<pair<int, string >> &Bids, vector < vector < pair<int, string>>> Players, Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15],string UserName)
 {
+	ifstream x;
+	x.open("Scores.txt", std::ofstream::out | std::ofstream::trunc);
+	x.close();
 	AiPlayer Ai;
 	CardDeck Deck;
 	vector<bool> inHand(4), InHand(4);
@@ -411,6 +414,8 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 	interactiveButton CallNumber[14];
 	interactiveButton CallColor[4];
 	interactiveButton Choice[2];
+	interactiveButton ScoreBoardWindow;
+
 
 	Texture avatar1;
 	Sprite Avatar1;
@@ -421,10 +426,20 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 	Texture SHDC;
 	Sprite shdc;
 	Texture CallingWindow;
+	Texture ScoreBoardWindowT;
 	Sprite callingwindow;
 	Sprite callingwindow2;
 
 	GameDesignSetUp(avatar1, Avatar1, avatar2, Avatar2, avatar3, Avatar3, SHDC, shdc, CallingWindow, callingwindow, callingwindow2, CallNumber, CallColor, Choice);
+
+	ScoreBoardWindowT.loadFromFile("CardsTextures/SBbutton.jpg");
+
+
+	ScoreBoardWindow.normal = ScoreBoardWindowT;
+	normalize(ScoreBoardWindow);
+	ScoreBoardWindow.shape.setSize(Vector2f( 100,100 ));
+	ScoreBoardWindow.shape.setPosition(Vector2f(817, 27));
+	RectButtonAssign2(ScoreBoardWindow);
 
 	Text text;
 	Font font;
@@ -750,7 +765,9 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 			}
 		}
-		if (mode == "ScoreCalculation") {
+		
+		if (mode == "ScoreCalculation")
+		{
 			bool riskDa = 0,withDa=0;
 			int winners = 0;
 			for (int b = 0; b < 4; b++) {
@@ -782,6 +799,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			mode = "RoundSetup";
 
 		}
+	
 		if (mode == "BeforeFinalCalling")
 		{
 			int v;
@@ -1326,12 +1344,95 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 		}
 
 
-
-		if (LMB())
+		
+		if (ibuttonAutoHover(ScoreBoardWindow,window))
 		{
-			cout << Mouse::getPosition(window).x << " " << Mouse::getPosition(window).y << endl;
-			hang();
+			Text username;
+			username.Bold;
+			username.setFont(font);
+			username.setFillColor(Color::White);
+			username.setCharacterSize(15);
+			username.setPosition(40, 50);
+			username.setString(UserName);
+			vector<vector<string>> ScoreSheet;
+			RenderWindow ScoreBoard(VideoMode(700,600), "Estimation", Style::Close);
+			Sprite BackGroundSB;
+			Texture SBbase;
+			SBbase.loadFromFile("CardsTextures/ScoreBoard.jpg");
+			BackGroundSB.setTexture(SBbase);
+			BackGroundSB.setPosition(0, 0);
+				ifstream x("Scores.txt");
+				
+				vector<Text> ToBeWritten;
+				while (x.peek() != -1)
+				{
+					vector<string> y;
+					string z;
+					while (getline(x, z, ' '))
+					{
+						y.push_back(z);
+
+					}
+					ScoreSheet.push_back(y);
+				}
+				x.close();
+
+				for (int i = 0; i < ScoreSheet.size(); i++)
+				{
+					string temp="";
+					Text x;
+					x.setFont(font);
+					x.setCharacterSize(20);
+					for (int j = 0; j < ScoreSheet[i].size(); j++)
+					{
+						temp += ScoreSheet[i][j];
+						temp += "                      ";
+					}
+					x.setString(temp);
+					x.setFillColor(Color::White);
+					ToBeWritten.push_back(x);
+
+				}
+				int Xpos = 46,Ypos=75;
+				for (int i = 0; i < ToBeWritten.size(); i++)
+				{
+					ToBeWritten[i].setPosition(Vector2f(46, Ypos+(i*20)));
+				}
+
+			while (ScoreBoard.isOpen())
+			{
+				Event E;
+				while (ScoreBoard.pollEvent(E))
+				{
+					switch (E.type)
+					{
+					case Event::Closed:
+						ScoreBoard.close();
+						break;
+					default:
+						break;
+					}
+				}
+
+				
+				if (LMB())
+				{
+					cout << Mouse::getPosition(ScoreBoard).x << " " << Mouse::getPosition(ScoreBoard).y << endl;
+					hang();
+				}
+				
+
+				ScoreBoard.clear();
+				ScoreBoard.draw(BackGroundSB);
+				ScoreBoard.draw(username);
+				for (int i = 0; i < ToBeWritten.size(); i++)
+					ScoreBoard.draw(ToBeWritten[i]);
+				ScoreBoard.display();
+
+
+			}
 		}
+
 
 
 		window.clear();
@@ -1341,6 +1442,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 		window.draw(Avatar2);
 		window.draw(Avatar3);
 		window.draw(shdc);
+		window.draw(ScoreBoardWindow.shape);
 		for (int i = 0; i < 4; i++)
 		{
 			window.draw(currentCalls[i]);
@@ -1377,6 +1479,12 @@ void GUI::RectButtonAssign(interactiveButton &ib)
 {
 	ib.button.lowerLimit = ib.shape.getPosition();
 	ib.button.upperLimit.x = ib.button.lowerLimit.x + ib.shape.getSize().x - 15;
+	ib.button.upperLimit.y = ib.button.lowerLimit.y + ib.shape.getSize().y;
+}
+void GUI::RectButtonAssign2(interactiveButton &ib)
+{
+	ib.button.lowerLimit = ib.shape.getPosition();
+	ib.button.upperLimit.x = ib.button.lowerLimit.x + ib.shape.getSize().x;
 	ib.button.upperLimit.y = ib.button.lowerLimit.y + ib.shape.getSize().y;
 }
 bool GUI::LMB()

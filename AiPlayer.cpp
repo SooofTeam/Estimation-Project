@@ -2438,7 +2438,8 @@ int AiPlayer::switchString(string x) {
 	return k;
 }
 
-int AiPlayer::score(int call, int lammat, bool risk, bool dash, bool trump, bool with, string gameStatus, int numWinners, int numLoosers) {
+int AiPlayer::score(int call, int lammat, bool risk, bool dash, bool trump, bool with, string gameStatus, int numWinners, int numLoosers) 
+{
 	// Win.
 	int score = 0;
 	if (call == lammat) {
