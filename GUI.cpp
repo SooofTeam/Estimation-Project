@@ -385,9 +385,10 @@ string GUI::TrumpDes(vector<pair<int, string>> Bids, int &Caller, pair<int, stri
 	return max.second;
 }
 
-void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interactiveButton Ai_0_Card[14], interactiveButton Ai_1_Card[14], interactiveButton Ai_2_Card[14], Sprite BackGround, Sprite CardsHolder, vector<pair<int, string >> &Bids, vector < vector < pair<int, string>>> Players, Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15],string UserName)
+void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interactiveButton Ai_0_Card[14], interactiveButton Ai_1_Card[14], interactiveButton Ai_2_Card[14], Sprite BackGround, Sprite CardsHolder, vector<pair<int, string >> &Bids, vector < vector < pair<int, string>>> Players, Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15], string UserName)
 {
-	float AnimationSpeed=0.5;
+	bool dashcalls[4] = { 0,0,0,0 };
+	float AnimationSpeed = 1;
 	ifstream x;
 	x.open("Scores.txt", std::ofstream::out | std::ofstream::trunc);
 	x.close();
@@ -449,7 +450,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 	ScoreBoardWindow.normal = ScoreBoardWindowT;
 	normalize(ScoreBoardWindow);
-	ScoreBoardWindow.shape.setSize(Vector2f( 190,50 ));
+	ScoreBoardWindow.shape.setSize(Vector2f(190, 50));
 	ScoreBoardWindow.shape.setPosition(Vector2f(800, 0));
 	RectButtonAssign2(ScoreBoardWindow);
 
@@ -460,7 +461,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 	Text StatusWriter;
 	pair<string, string> HighestBid;
 
-	int maximum;
+	int maximum, roundsCounter = 0;
 
 	pair<int, string> wara2a;
 	Vector2f destination = Vector2f(1000, 550);
@@ -493,8 +494,12 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 	Sound xc;
 	SoundBuffer  c;
+	Sound xd;
+	SoundBuffer  d;
 	c.loadFromFile("CardsTextures/PlayCard.wav");
+	d.loadFromFile("CardsTextures/Shuffle.wav");
 	xc.setBuffer(c);
+	xd.setBuffer(d);
 
 
 	while (window.isOpen())
@@ -515,9 +520,10 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 		if (mode == "RoundSetup")
 		{
 
-		
+
 			system("CLS");
 			TotalLammat = 0;
+			memset(dashcalls, 0, 4);
 			HighestBid.first = "";
 			HighestBid.second = "";
 			Bids.clear();
@@ -529,9 +535,13 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 				InHand[i] = 0;
 				inHand[i] = 0;
 				Lammat[i] = 0;
+				currentCalls[i].setString("");
+				LammetKam[i].setString("0");
 			}
+			StatusWriter.setString("");
 			vector < pair<int, string>> DeckOfCards = Deck.Cards();
-			srand(time(0));
+			//srand(time(0));
+			for(int i=0;i<55;i++)
 			random_shuffle(DeckOfCards.begin(), DeckOfCards.end());
 
 			Deck.Distribute(Players, DeckOfCards);
@@ -550,7 +560,11 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 			for (int i = 0; i < 3; i++)
 			{
-				Bids.push_back(Ai.MainCall(Ai.BidCall(Players[i]), Players[i]));
+				if (Ai.dashCall(Players[i])) {
+					dashcalls[i] = 1;
+					Bids.push_back(make_pair(0, "EClubs"));
+				}
+				else Bids.push_back(Ai.MainCall(Ai.BidCall(Players[i]), Players[i]));
 			}
 			UserBid.first = 0;
 			UserBid.second = "";
@@ -658,6 +672,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 				}
 				else
 				{
+					xd.play();
 					i++;
 					Card[i].shape.move(factorx, 0);
 					factorx += 60;
@@ -799,11 +814,13 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 				CallingWindow1.display();
 
 			}
+			
 		}
-		
+
 		if (mode == "ScoreCalculation")
 		{
-			bool riskDa = 0,withDa=0;
+			roundsCounter++;
+			bool riskDa = 0, withDa = 0;
 			int winners = 0;
 			for (int b = 0; b < 4; b++) {
 				if (Lammat[b] == Calls[b]) {
@@ -822,15 +839,16 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 					for (int b = Caller, v = 0; v < 4; v++) {
 						riskDa = 0; withDa = 0;
 						if (v == 0) {
-							Scores[b] += Ai.score(Calls[b], Lammat[b], false, false, true, false, status, winners, 4 - winners); b = (b + 1) % 4; continue;
-							}
+							Scores[b] += Ai.score(Calls[b], Lammat[b], false,dashcalls[b], true, false, status, winners, 4 - winners); b = (b + 1) % 4; continue;
+						}
 						if (Lammat[b] == Lammat[Caller]) { withDa = 1; }
-						if (v == 3) {
+						if (v == 3 ) {
+							if(!dashcalls[b])
 							if (abs(13 - TotalLammat) >= 2) { riskDa = 1; }
 						}
-				
-							Scores[b]+=Ai.score(Calls[b], Lammat[b], riskDa, false, false, withDa, status, winners, 4 - winners);
-							b = (b + 1) % 4;
+
+						Scores[b] += Ai.score(Calls[b], Lammat[b], riskDa, dashcalls[b], false, withDa, status, winners, 4 - winners);
+						b = (b + 1) % 4;
 
 					}
 				}
@@ -854,23 +872,23 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 				}
 			}
 			ofstream writing;
-			writing.open("Scores.txt",ios::app);
+			writing.open("Scores.txt", ios::app);
 			for (int b = 0; b < 4; b++) {
 				writing << Scores[b] << " ";
 			}
 			writing << endl;
 			writing.close();
-			mode = "RoundSetup";
+			if (roundsCounter == 18) { mode = "GameFinish"; }
+			else mode = "RoundSetup";
 
 		}
-	
+		if (mode == "GameFinish") {
+
+		}
+
 		if (mode == "BeforeFinalCalling")
 		{
-			int v;
-			if (Trump == "Spades")v = 0;
-			if (Trump == "Hearts")v = 1;
-			if (Trump == "Diamonds")v = 2;
-			if (Trump == "EClubs")v = 3;
+			int v = Ai.switchString(Trump);
 
 
 			normalize(CallNumber[UserBid.first]);
@@ -900,8 +918,8 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 			for (int gh = 0, b = Caller; gh < 4; gh++)
 			{
-				cout << "(GH) : " << gh << " " << "(B) :"<<b << endl;
-				
+				cout << "(GH) : " << gh << " " << "(B) :" << b << endl;
+
 				int temp = 0;
 
 				if (b == 3 && !wasal)//User Final Call
@@ -969,7 +987,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 						{
 							TotalLammat += UserBid.first;
 							Calls[b] = UserBid.first;
-							
+
 							if (gh != 3 && b == 3)
 							{
 								b = (b + 1) % 4;
@@ -1002,7 +1020,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 							for (int c = maximum; c <= 13; c++)
 							{
-								
+
 								CallingWindow2.draw(CallNumber[c].shape);
 							}
 
@@ -1034,8 +1052,8 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 					}
 					continue;
 				}
-				
-				
+
+
 				if (gh == 3 && b != 3)
 				{
 					cout << "Wasal le a5er caller , wel (gh) =" << gh << endl;
@@ -1043,10 +1061,10 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 					TotalLammat += temp;
 					Calls[b] = temp;
 
-					cout <<"TEMP : " << temp << endl;
-					
-					currentCalls[b].setString(" / "+to_string(temp));
-					
+					cout << "TEMP : " << temp << endl;
+
+					currentCalls[b].setString(" / " + to_string(temp));
+
 					(TotalLammat > 13) ? status = "Over" : status = "Under";
 					cout << "Status :" << status << endl;
 
@@ -1055,18 +1073,18 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 					{
 						LammetKam[i].setString("0");
 					}
-					
+
 					if (finalcall)
 					{
 						if (Caller == 0) { mode = "Player0Turn"; inHand[0] = 1; InHand[0] = 1; }
 						else if (Caller == 1) { mode = "Player1Turn"; inHand[1] = 1; InHand[1] = 1; }
 						else if (Caller == 2) { mode = "Player2Turn"; inHand[2] = 1; InHand[2] = 1; }
-						else if (Caller == 3) { mode = "UserTurn"; inHand[3] = 1; InHand[3] = 1; }	
+						else if (Caller == 3) { mode = "UserTurn"; inHand[3] = 1; InHand[3] = 1; }
 					}
 
 					break;
 				}
-				else if (b != 3 )
+				else if (b != 3)
 				{
 					temp = Ai.FinalCall(Trump, Players[b], b, TotalLammat, Halemm[b]);
 					Calls[b] = temp;
@@ -1386,8 +1404,8 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			}
 			else
 			{
-				
-			xc.play();
+
+				xc.play();
 				GroundCards[OnGround.size() - 1].shape.setPosition(Card[m].shape.getPosition());
 				mode = "Player0Turn";
 				inHand[0] = true;
@@ -1564,8 +1582,8 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 		}
 
 
-		
-		if (ibuttonAutoHover(ScoreBoardWindow,window))
+
+		if (ibuttonAutoHover(ScoreBoardWindow, window))
 		{
 			Text username;
 			username.Bold;
@@ -1575,49 +1593,49 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			username.setPosition(540, 60);
 			username.setString(UserName);
 			vector<vector<string>> ScoreSheet;
-			RenderWindow ScoreBoard(VideoMode(700,700), "Estimation", Style::Close);
+			RenderWindow ScoreBoard(VideoMode(700, 700), "Estimation", Style::Close);
 			Sprite BackGroundSB;
 			Texture SBbase;
 			SBbase.loadFromFile("CardsTextures/ScoreBoard.jpg");
 			BackGroundSB.setTexture(SBbase);
 			BackGroundSB.setPosition(0, 0);
-				ifstream x("Scores.txt");
-				
-				vector<Text> ToBeWritten;
-				while (x.peek() != -1)
-				{
-					vector<string> y;
-					string z;
-					while (getline(x, z, ' '))
-					{
-						y.push_back(z);
+			ifstream x("Scores.txt");
 
-					}
-					ScoreSheet.push_back(y);
-				}
-				x.close();
-
-				for (int i = 0; i < ScoreSheet.size(); i++)
+			vector<Text> ToBeWritten;
+			while (x.peek() != -1)
+			{
+				vector<string> y;
+				string z;
+				while (getline(x, z, ' '))
 				{
-					string temp="";
-					Text x;
-					x.setFont(font);
-					x.setCharacterSize(20);
-					for (int j = 0; j < ScoreSheet[i].size(); j++)
-					{
-						temp += ScoreSheet[i][j];
-						temp += "                      ";
-					}
-					x.setString(temp);
-					x.setFillColor(Color::White);
-					ToBeWritten.push_back(x);
+					y.push_back(z);
 
 				}
-				int Xpos = 46,Ypos=90;
-				for (int i = 0; i < ToBeWritten.size(); i++)
+				ScoreSheet.push_back(y);
+			}
+			x.close();
+
+			for (int i = 0; i < ScoreSheet.size(); i++)
+			{
+				string temp = "";
+				Text x;
+				x.setFont(font);
+				x.setCharacterSize(20);
+				for (int j = 0; j < ScoreSheet[i].size(); j++)
 				{
-					ToBeWritten[i].setPosition(Vector2f(46, Ypos+(i*20)));
+					temp += ScoreSheet[i][j];
+					temp += "                      ";
 				}
+				x.setString(temp);
+				x.setFillColor(Color::White);
+				ToBeWritten.push_back(x);
+
+			}
+			int Xpos = 46, Ypos = 90;
+			for (int i = 0; i < ToBeWritten.size(); i++)
+			{
+				ToBeWritten[i].setPosition(Vector2f(46, Ypos + (i * 20)));
+			}
 
 			while (ScoreBoard.isOpen())
 			{
@@ -1658,8 +1676,8 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 		window.draw(ScoreBoardWindow.shape);
 		if (Trump != "")
 		{
-		int x = Ai.switchString(Trump);
-		window.draw(TrumpPhoto[x]);
+			int x = Ai.switchString(Trump);
+			window.draw(TrumpPhoto[x]);
 		}
 		if (status != "")
 		{
