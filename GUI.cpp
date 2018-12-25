@@ -387,6 +387,7 @@ string GUI::TrumpDes(vector<pair<int, string>> Bids, int &Caller, pair<int, stri
 
 void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interactiveButton Ai_0_Card[14], interactiveButton Ai_1_Card[14], interactiveButton Ai_2_Card[14], Sprite BackGround, Sprite CardsHolder, vector<pair<int, string >> &Bids, vector < vector < pair<int, string>>> Players, Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15],string UserName)
 {
+	float AnimationSpeed=0.5;
 	ifstream x;
 	x.open("Scores.txt", std::ofstream::out | std::ofstream::trunc);
 	x.close();
@@ -438,18 +439,18 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 	for (int i = 0; i < 4; i++)
 	{
 		TrumpPhoto[i].setTexture(TrumpPhotoT[i]);
-		TrumpPhoto[i].setPosition(800, 30);
+		TrumpPhoto[i].setPosition(800, 60);
 	}
 
 	GameDesignSetUp(avatar1, Avatar1, avatar2, Avatar2, avatar3, Avatar3, SHDC, shdc, CallingWindow, callingwindow, callingwindow2, CallNumber, CallColor, Choice);
 
-	ScoreBoardWindowT.loadFromFile("CardsTextures/SBbutton.jpg");
+	ScoreBoardWindowT.loadFromFile("CardsTextures/SBbutton.png");
 
 
 	ScoreBoardWindow.normal = ScoreBoardWindowT;
 	normalize(ScoreBoardWindow);
-	ScoreBoardWindow.shape.setSize(Vector2f( 100,100 ));
-	ScoreBoardWindow.shape.setPosition(Vector2f(900, 0));
+	ScoreBoardWindow.shape.setSize(Vector2f( 190,50 ));
+	ScoreBoardWindow.shape.setPosition(Vector2f(800, 0));
 	RectButtonAssign2(ScoreBoardWindow);
 
 	Text text;
@@ -470,6 +471,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 	int i = 0, i2 = 0;
 	int h = 0;
 	int m = -1;
+	bool DoubleRound = false;
 	vector<int> Lammat(4);
 	vector<int>Calls(4);
 	bool finalcall = false;
@@ -489,6 +491,12 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 	int PlaysCounter = 1;
 	int RoundsCounter = 1;
 
+	Sound xc;
+	SoundBuffer  c;
+	c.loadFromFile("CardsTextures/PlayCard.wav");
+	xc.setBuffer(c);
+
+
 	while (window.isOpen())
 	{
 		Event E;
@@ -504,9 +512,10 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			}
 		}
 
-
 		if (mode == "RoundSetup")
 		{
+
+		
 			system("CLS");
 			TotalLammat = 0;
 			HighestBid.first = "";
@@ -522,8 +531,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 				Lammat[i] = 0;
 			}
 			vector < pair<int, string>> DeckOfCards = Deck.Cards();
-			//srand(time(0));
-			for(int jb=0;jb<833;jb++)
+			srand(time(0));
 			random_shuffle(DeckOfCards.begin(), DeckOfCards.end());
 
 			Deck.Distribute(Players, DeckOfCards);
@@ -590,7 +598,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			currentCalls[3].setPosition(100, 38);
 			LammetKam[3].setPosition(70, 38);
 
-			StatusWriter.setPosition(800, 80);
+			StatusWriter.setPosition(800, 120);
 			StatusWriter.setFont(font);
 			StatusWriter.setCharacterSize(25);
 			StatusWriter.Bold;
@@ -599,11 +607,11 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			{
 				currentCalls[t].setFont(font);
 				currentCalls[t].setCharacterSize(30);
-				currentCalls[t].setFillColor(Color::White);
+				currentCalls[t].setFillColor(Color::Black);
 				currentCalls[t].Bold;
 				LammetKam[t].setFont(font);
 				LammetKam[t].setCharacterSize(30);
-				LammetKam[t].setFillColor(Color::White);
+				LammetKam[t].setFillColor(Color::Black);
 				LammetKam[t].Bold;
 			}
 
@@ -635,15 +643,12 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			memset(ishovered, 0, 13);
 			GameDesignSetUp(avatar1, Avatar1, avatar2, Avatar2, avatar3, Avatar3, SHDC, shdc, CallingWindow, callingwindow, callingwindow2, CallNumber, CallColor, Choice);
 
-
 			mode = "RoundSetupAnimation";
 
 		}
 
 		if (mode == "RoundSetupAnimation")
 		{
-
-
 			if (i != 13)
 			{
 
@@ -660,6 +665,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			}
 			else
 			{
+				xc.stop();
 				mode = "UserCalling";
 			}
 
@@ -804,19 +810,48 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 					winners++;
 				}
 			}
-			for (int b = Caller, v = 0; v < 4; v++) {
-				riskDa = 0; withDa = 0;
-				if (v == 0) {
-					Scores[b] += Ai.score(Calls[b], Lammat[b], false, false, true, false, status, winners, 4 - winners); b = (b + 1) % 4; continue;
-					}
-				if (Lammat[b] == Lammat[Caller]) { withDa = 1; }
-				if (v == 3) {
-					if (abs(13 - TotalLammat) >= 2) { riskDa = 1; }
-				}
-				
-					Scores[b]+=Ai.score(Calls[b], Lammat[b], riskDa, false, false, withDa, status, winners, 4 - winners);
-					b = (b + 1) % 4;
+			if (winners == 0)
+			{
+				DoubleRound = true;
+			}
+			else
+			{
+				if (!DoubleRound)
+				{
 
+					for (int b = Caller, v = 0; v < 4; v++) {
+						riskDa = 0; withDa = 0;
+						if (v == 0) {
+							Scores[b] += Ai.score(Calls[b], Lammat[b], false, false, true, false, status, winners, 4 - winners); b = (b + 1) % 4; continue;
+							}
+						if (Lammat[b] == Lammat[Caller]) { withDa = 1; }
+						if (v == 3) {
+							if (abs(13 - TotalLammat) >= 2) { riskDa = 1; }
+						}
+				
+							Scores[b]+=Ai.score(Calls[b], Lammat[b], riskDa, false, false, withDa, status, winners, 4 - winners);
+							b = (b + 1) % 4;
+
+					}
+				}
+				else
+				{
+					DoubleRound = false;
+					for (int b = Caller, v = 0; v < 4; v++) {
+						riskDa = 0; withDa = 0;
+						if (v == 0) {
+							Scores[b] += (Ai.score(Calls[b], Lammat[b], false, false, true, false, status, winners, 4 - winners)) * 2; b = (b + 1) % 4; continue;
+						}
+						if (Lammat[b] == Lammat[Caller]) { withDa = 1; }
+						if (v == 3) {
+							if (abs(13 - TotalLammat) >= 2) { riskDa = 1; }
+						}
+
+						Scores[b] += (Ai.score(Calls[b], Lammat[b], riskDa, false, false, withDa, status, winners, 4 - winners)) * 2;
+						b = (b + 1) % 4;
+
+					}
+				}
 			}
 			ofstream writing;
 			writing.open("Scores.txt",ios::app);
@@ -950,7 +985,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 							else if (Caller == 2) { mode = "Player2Turn"; inHand[2] = 1; InHand[2] = 1; }
 							else if (Caller == 3) { mode = "UserTurn"; inHand[3] = 1; InHand[3] = 1; }
 
-							currentCalls[3].setString("/" + to_string(UserBid.first));
+							currentCalls[3].setString(" / " + to_string(UserBid.first));
 
 							for (int i = 0; i < 4; i++)
 							{
@@ -1035,7 +1070,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 				{
 					temp = Ai.FinalCall(Trump, Players[b], b, TotalLammat, Halemm[b]);
 					Calls[b] = temp;
-					currentCalls[b].setString("/" + to_string(temp));
+					currentCalls[b].setString(" / " + to_string(temp));
 					TotalLammat += temp;
 
 					b = (b + 1) % 4;
@@ -1087,19 +1122,19 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			{
 				if (GroundCards[0].shape.getPosition().x < 855)
 				{
-					GroundCards[0].shape.move(5, 0);
+					GroundCards[0].shape.move(AnimationSpeed, 0);
 				}
 				if (GroundCards[1].shape.getPosition().x < 855)
 				{
-					GroundCards[1].shape.move(5, 0);
+					GroundCards[1].shape.move(AnimationSpeed, 0);
 				}
 				if (GroundCards[2].shape.getPosition().x < 855)
 				{
-					GroundCards[2].shape.move(5, 0);
+					GroundCards[2].shape.move(AnimationSpeed, 0);
 				}
 				if (GroundCards[3].shape.getPosition().x < 855)
 				{
-					GroundCards[3].shape.move(5, 0);
+					GroundCards[3].shape.move(AnimationSpeed, 0);
 				}
 				else
 				{
@@ -1113,19 +1148,19 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			{
 				if (GroundCards[0].shape.getPosition().y > 90)
 				{
-					GroundCards[0].shape.move(0, -5);
+					GroundCards[0].shape.move(0, -AnimationSpeed);
 				}
 				if (GroundCards[1].shape.getPosition().y > 90)
 				{
-					GroundCards[1].shape.move(0, -5);
+					GroundCards[1].shape.move(0, -AnimationSpeed);
 				}
 				if (GroundCards[2].shape.getPosition().y > 90)
 				{
-					GroundCards[2].shape.move(0, -5);
+					GroundCards[2].shape.move(0, -AnimationSpeed);
 				}
 				if (GroundCards[3].shape.getPosition().y > 90)
 				{
-					GroundCards[3].shape.move(0, -5);
+					GroundCards[3].shape.move(0, -AnimationSpeed);
 				}
 				else
 				{
@@ -1142,19 +1177,19 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 				if (GroundCards[0].shape.getPosition().x > 145)
 				{
-					GroundCards[0].shape.move(-5, 0);
+					GroundCards[0].shape.move(-AnimationSpeed, 0);
 				}
 				if (GroundCards[1].shape.getPosition().x > 145)
 				{
-					GroundCards[1].shape.move(-5, 0);
+					GroundCards[1].shape.move(-AnimationSpeed, 0);
 				}
 				if (GroundCards[2].shape.getPosition().x > 145)
 				{
-					GroundCards[2].shape.move(-5, 0);
+					GroundCards[2].shape.move(-AnimationSpeed, 0);
 				}
 				if (GroundCards[3].shape.getPosition().x > 145)
 				{
-					GroundCards[3].shape.move(-5, 0);
+					GroundCards[3].shape.move(-AnimationSpeed, 0);
 				}
 				else
 				{
@@ -1171,19 +1206,19 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 				if (GroundCards[0].shape.getPosition().y < 550)
 				{
-					GroundCards[0].shape.move(0, 5);
+					GroundCards[0].shape.move(0, AnimationSpeed);
 				}
 				if (GroundCards[1].shape.getPosition().y < 550)
 				{
-					GroundCards[1].shape.move(0, 5);
+					GroundCards[1].shape.move(0, AnimationSpeed);
 				}
 				if (GroundCards[2].shape.getPosition().y < 550)
 				{
-					GroundCards[2].shape.move(0, 5);
+					GroundCards[2].shape.move(0, AnimationSpeed);
 				}
 				if (GroundCards[3].shape.getPosition().y < 550)
 				{
-					GroundCards[3].shape.move(0, 5);
+					GroundCards[3].shape.move(0, AnimationSpeed);
 				}
 				else
 				{
@@ -1347,10 +1382,12 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 		{
 			if (Card[m].shape.getPosition().y > 290)
 			{
-				Card[m].shape.move(0, -1);
+				Card[m].shape.move(0, -AnimationSpeed);
 			}
 			else
 			{
+				
+			xc.play();
 				GroundCards[OnGround.size() - 1].shape.setPosition(Card[m].shape.getPosition());
 				mode = "Player0Turn";
 				inHand[0] = true;
@@ -1388,10 +1425,11 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			Ai_0_Card[m].shape.setSize(Vector2f(75, 108));
 			if (Ai_0_Card[m].shape.getPosition().x > 550)
 			{
-				Ai_0_Card[m].shape.move(-1, 0);
+				Ai_0_Card[m].shape.move(-AnimationSpeed, 0);
 			}
 			else
 			{
+				xc.play();
 				GroundCards[OnGround.size() - 1].shape.setPosition(Ai_0_Card[m].shape.getPosition());
 				mode = "Player1Turn";
 				inHand[1] = true;
@@ -1426,10 +1464,12 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			Ai_1_Card[m].shape.setSize(Vector2f(75, 108));
 			if (Ai_1_Card[m].shape.getPosition().y < 180)
 			{
-				Ai_1_Card[m].shape.move(0, 1);
+				Ai_1_Card[m].shape.move(0, AnimationSpeed);
 			}
 			else
 			{
+				xc.play();
+
 				GroundCards[OnGround.size() - 1].shape.setPosition(Ai_1_Card[m].shape.getPosition());
 				mode = "Player2Turn";
 				inHand[2] = true;
@@ -1465,10 +1505,13 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			Ai_2_Card[m].shape.setSize(Vector2f(75, 108));
 			if (Ai_2_Card[m].shape.getPosition().x < 400)
 			{
-				Ai_2_Card[m].shape.move(1, 0);
+				Ai_2_Card[m].shape.move(AnimationSpeed, 0);
 			}
 			else
 			{
+				xc.play();
+
+
 				GroundCards[OnGround.size() - 1].shape.setPosition(Ai_2_Card[m].shape.getPosition());
 				mode = "UserTurn";
 				inHand[3] = true;
@@ -1529,10 +1572,10 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			username.setFont(font);
 			username.setFillColor(Color::White);
 			username.setCharacterSize(15);
-			username.setPosition(40, 50);
+			username.setPosition(540, 60);
 			username.setString(UserName);
 			vector<vector<string>> ScoreSheet;
-			RenderWindow ScoreBoard(VideoMode(700,600), "Estimation", Style::Close);
+			RenderWindow ScoreBoard(VideoMode(700,700), "Estimation", Style::Close);
 			Sprite BackGroundSB;
 			Texture SBbase;
 			SBbase.loadFromFile("CardsTextures/ScoreBoard.jpg");
@@ -1570,7 +1613,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 					ToBeWritten.push_back(x);
 
 				}
-				int Xpos = 46,Ypos=75;
+				int Xpos = 46,Ypos=90;
 				for (int i = 0; i < ToBeWritten.size(); i++)
 				{
 					ToBeWritten[i].setPosition(Vector2f(46, Ypos+(i*20)));
@@ -1591,13 +1634,6 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 					}
 				}
 
-				
-				if (LMB())
-				{
-					cout << Mouse::getPosition(ScoreBoard).x << " " << Mouse::getPosition(ScoreBoard).y << endl;
-					hang();
-				}
-				
 
 				ScoreBoard.clear();
 				ScoreBoard.draw(BackGroundSB);

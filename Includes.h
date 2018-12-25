@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <functional>
 #include "SFML\Graphics.hpp"
+#include "SFML\Audio.hpp"
 #include "AiPlayer.h"
 #include "CardDeck.h"
 #include "GUI.h"

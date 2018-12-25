@@ -40,6 +40,10 @@ int main()
 	MainMenuBackground.setTexture(MainMenuBackgroundT);
 	MainMenuBackground.setPosition(0, 0);
 	string name;
+	Music xc;
+	xc.openFromFile("CardsTextures/Shuffle.wav");
+	xc.setVolume(80);
+
 	while (MainMenu.isOpen())
 	{
 		Event E;
@@ -57,7 +61,9 @@ int main()
 					if (E.text.unicode == 13 && name.size() != 0)
 					{
 						namewritten = true;
+					
 						MainMenu.close();
+						
 					}
 					else if (E.text.unicode == 8)
 					{
@@ -66,6 +72,7 @@ int main()
 					else if(E.text.unicode != 13)
 					{
 						name += static_cast<char>(E.text.unicode);
+					
 					}
 					text.setString(name);
 					break;

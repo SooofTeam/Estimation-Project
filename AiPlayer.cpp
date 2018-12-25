@@ -1813,7 +1813,7 @@ pair<int, string> AiPlayer::CardDes(vector < pair<int, string>> &CardDeck, vecto
 					for (auto jk : pc) {
 						if (jk.first > akbar7aga.first&&jk.second != Trump) {
 							akbar7aga.first = jk.first;
-							akbar7aga.second == jk.second;
+							akbar7aga.second = jk.second;
 						}
 					}
 					if (akbar7aga.first == -1) {
