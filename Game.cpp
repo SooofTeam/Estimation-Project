@@ -18,6 +18,19 @@ int main()
 	interactiveButton AiPlayer_0_Cards[14];
 	interactiveButton AiPlayer_1_Cards[14];
 	interactiveButton AiPlayer_2_Cards[14];
+	interactiveButton GameMode[3];
+
+	GameMode[0].normal.loadFromFile("CardsTextures/MicroButton.jpg");
+	GameMode[1].normal.loadFromFile("CardsTextures/MiniButton.jpg");
+	GameMode[2].normal.loadFromFile("CardsTextures/FullButton.jpg");
+
+	for (int i = 0; i < 3; i++)
+	{
+		GameMode[i].shape.setSize(Vector2f( 120, 120));
+		GameMode[i].shape.setPosition((i*140)+450,270);
+		gui.normalize(GameMode[i]);
+		gui.RectButtonAssign2(GameMode[i]);
+	}
 
 	Texture Background, Spades[15], Hearts[15], Diamonds[15], Clubs[15], Cardsholder, MainMenuBackgroundT;
 	MainMenuBackgroundT.loadFromFile("CardsTextures/MainMenu.jpg");
@@ -40,9 +53,11 @@ int main()
 	MainMenuBackground.setTexture(MainMenuBackgroundT);
 	MainMenuBackground.setPosition(0, 0);
 	string name;
+	int NumberOfRounds;
 	Music xc;
 	xc.openFromFile("CardsTextures/Shuffle.wav");
 	xc.setVolume(80);
+
 
 	while (MainMenu.isOpen())
 	{
@@ -55,15 +70,14 @@ int main()
 				MainMenu.close();
 				break;
 			case Event::TextEntered:
+				if (!namewritten)
+				{
 				if ((E.text.unicode < 128 && name.size() <14 ) || E.text.unicode == 8)
 				{
 					name = text.getString();
 					if (E.text.unicode == 13 && name.size() != 0)
 					{
 						namewritten = true;
-					
-						MainMenu.close();
-						
 					}
 					else if (E.text.unicode == 8)
 					{
@@ -77,19 +91,41 @@ int main()
 					text.setString(name);
 					break;
 				}
+				}
 			default:
 				break;
 			}
 		}
 
 
+		for (int i = 0; i < 3; i++)
+		{
+			if (gui.ibuttonAutoHover(GameMode[i], MainMenu) && namewritten)
+			{
+				if (i == 0)
+					NumberOfRounds = 5;
+				else if(i==1)
+					NumberOfRounds = 10;
+				else
+					NumberOfRounds = 18;
+				MainMenu.close();
+			}
+		}
+
+		
+
 		MainMenu.clear();
 		MainMenu.draw(MainMenuBackground);
 		MainMenu.draw(text);
+		if (namewritten)
+		{
+		for (int i = 0; i < 3; i++)
+			MainMenu.draw(GameMode[i].shape);
+		}
 		MainMenu.display();
 
 	}
 	if(namewritten)
-	gui.ProgramRun(GameWindow, UserCards, AiPlayer_0_Cards, AiPlayer_1_Cards, AiPlayer_2_Cards, BackGround, CardsHolder, Bids, Players, Spades, Diamonds, Hearts, Clubs,name);
+	gui.ProgramRun(GameWindow, UserCards, AiPlayer_0_Cards, AiPlayer_1_Cards, AiPlayer_2_Cards, BackGround, CardsHolder, Bids, Players, Spades, Diamonds, Hearts, Clubs,name,NumberOfRounds);
 
 }

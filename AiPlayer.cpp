@@ -2393,60 +2393,60 @@ pair<int, string> AiPlayer::MainCall(pair<int, string> &Bidcall, vector < pair<i
 
 }
 
-/*bool  AiPlayer::dashCall(vector < pair<int, string>> pc)
+bool  AiPlayer::dashCall(vector < pair<int, string>> pc)
 {
-vector<int>comp;
-vector<pair<int, string>>Counter;
-//counters to know the number of cards of each type
-int counterS = 0;
-int counterH = 0;
-int counterD = 0;
-int counterE = 0;
-//the counters to know the number of cards less than 4 points or between 5 && 8
-int s = 0;
-int h = 0;
-int d = 0;
-int e = 0;
-bool dashcall = true;
-for (int i = 14; i >= 2; i--)
-comp.push_back(i);
-vector <vector <int>> Shapes(4);
-for (auto i : pc)
-{
-if (i.second == "Spades")
-{
-Shapes[0].push_back(i.first);
-counterS++;
+	vector<int>comp;
+	vector<pair<int, string>>Counter;
+	//counters to know the number of cards of each type
+	int counterS = 0;
+	int counterH = 0;
+	int counterD = 0;
+	int counterE = 0;
+	//the counters to know the number of cards less than 4 points or between 5 && 8
+	int s = 0;
+	int h = 0;
+	int d = 0;
+	int e = 0;
+	bool dashcall = true;
+	for (int i = 14; i >= 2; i--)
+		comp.push_back(i);
+	vector <vector <int>> Shapes(4);
+	for (auto i : pc)
+	{
+		if (i.second == "Spades")
+		{
+			Shapes[0].push_back(i.first);
+			counterS++;
+		}
+		if (i.second == "Hearts")
+		{
+			Shapes[1].push_back(i.first);
+			counterH++;
+		}
+		if (i.second == "Diamonds")
+		{
+			Shapes[2].push_back(i.first);
+			counterD++;
+		}
+		if (i.second == "EClubs")
+		{
+			Shapes[3].push_back(i.first);
+			counterE++;
+		}
+	}
+	for (int j = 0; j < counterS; j++)
+		if ((Shapes[0][j] <= 4) || (Shapes[0][j] >= 5 && Shapes[0][j] <= 8))s++;
+	for (int j = 0; j < counterH; j++)
+		if ((Shapes[1][j] <= 4) || (Shapes[1][j] >= 5 && Shapes[1][j] <= 8))h++;
+	for (int j = 0; j < counterD; j++)
+		if ((Shapes[2][j] <= 4) || (Shapes[2][j] >= 5 && Shapes[2][j] <= 8))d++;
+	for (int j = 0; j < counterE; j++)
+		if ((Shapes[3][j] <= 4) || (Shapes[3][j] >= 5 && Shapes[3][j] <= 8))e++;
+	if (e >= 2 && d >= 2 && h >= 2 && s >= 2)
+		return dashcall;
+	else
+		return !dashcall;
 }
-if (i.second == "Hearts")
-{
-Shapes[1].push_back(i.first);
-counterH++;
-}
-if (i.second == "Diamonds")
-{
-Shapes[2].push_back(i.first);
-counterD++;
-}
-if (i.second == "EClubs")
-{
-Shapes[3].push_back(i.first);
-counterE++;
-}
-}
-for (int j = 0; j < counterS; j++)
-if ((Shapes[0][j] <= 4) || (Shapes[0][j] >= 5 && Shapes[0][j] <= 8))s++;
-for (int j = 0; j < counterH; j++)
-if ((Shapes[1][j] <= 4) || (Shapes[1][j] >= 5 && Shapes[1][j] <= 8))h++;
-for (int j = 0; j < counterD; j++)
-if ((Shapes[2][j] <= 4) || (Shapes[2][j] >= 5 && Shapes[2][j] <= 8))d++;
-for (int j = 0; j < counterE; j++)
-if ((Shapes[3][j] <= 4) || (Shapes[3][j] >= 5 && Shapes[3][j] <= 8))e++;
-if (e >= 2 && d >= 2 && h >= 2 && s >= 2)
-return dashcall;
-else
-return !dashcall;
-}*/
 string AiPlayer::switchInt(int x) {
 	string k;
 	if (x == 0) { k = "Spades"; }
@@ -2464,19 +2464,23 @@ int AiPlayer::switchString(string x) {
 	return k;
 }
 
-int AiPlayer::score(int call, int lammat, bool risk, bool dash, bool trump, bool with, string gameStatus, int numWinners, int numLoosers) 
+int AiPlayer::score(int call, int lammat, bool risk, bool dash, bool trump, bool with, string gameStatus, int numWinners, int numLoosers)
 {
 	// Win.
 	int score = 0;
 	if (call == lammat) {
 		//Dash
-		if (call == 0) {
+		if (dash) {
 			if (gameStatus == "Over") {
 				score += 25;
 			}
 			else {
 				score += 33;
 			}
+			if (numWinners == 1) {
+				score += 10;
+			}
+			return score;
 		}
 		//Risk
 		if (risk) {
@@ -2500,13 +2504,15 @@ int AiPlayer::score(int call, int lammat, bool risk, bool dash, bool trump, bool
 	//Lose
 	if (call != lammat) {
 		//Dash
-		if (call == 0) {
+		if (dash) {
 			if (gameStatus == "Over") {
 				score -= 25;
 			}
 			else {
 				score -= 33;
 			}
+			if (numWinners == 1)score -= 10;
+			return score;
 		}
 		//Risk
 		if (risk) {
@@ -2528,7 +2534,6 @@ int AiPlayer::score(int call, int lammat, bool risk, bool dash, bool trump, bool
 	}
 	return score;
 }
-
 AiPlayer::~AiPlayer()
 {
 }

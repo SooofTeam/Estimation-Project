@@ -385,12 +385,12 @@ string GUI::TrumpDes(vector<pair<int, string>> Bids, int &Caller, pair<int, stri
 	return max.second;
 }
 
-void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interactiveButton Ai_0_Card[14], interactiveButton Ai_1_Card[14], interactiveButton Ai_2_Card[14], Sprite BackGround, Sprite CardsHolder, vector<pair<int, string >> &Bids, vector < vector < pair<int, string>>> Players, Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15], string UserName)
+void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interactiveButton Ai_0_Card[14], interactiveButton Ai_1_Card[14], interactiveButton Ai_2_Card[14], Sprite BackGround, Sprite CardsHolder, vector<pair<int, string >> &Bids, vector < vector < pair<int, string>>> Players, Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15], string UserName,int NumberOfRounds)
 {
 	bool dashcalls[4] = { 0,0,0,0 };
 	float AnimationSpeed = 1;
 	ifstream x;
-	x.open("Scores.txt", std::ofstream::out | std::ofstream::trunc);
+	x.open("Scores.txt", ofstream::out |  ofstream::trunc);
 	x.close();
 	AiPlayer Ai;
 	CardDeck Deck;
@@ -414,6 +414,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 	}
 
 	interactiveButton CallNumber[14];
+	interactiveButton DashOrNot[2];
 	interactiveButton CallColor[4];
 	interactiveButton Choice[2];
 	interactiveButton ScoreBoardWindow;
@@ -429,6 +430,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 	Sprite shdc;
 	Texture CallingWindow;
 	Texture ScoreBoardWindowT;
+	Texture DashCallWindowT;
 	Texture TrumpPhotoT[4];
 	TrumpPhotoT[0].loadFromFile("CardsTextures/TrumpS.png");
 	TrumpPhotoT[1].loadFromFile("CardsTextures/TrumpH.png");
@@ -436,12 +438,22 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 	TrumpPhotoT[3].loadFromFile("CardsTextures/TrumpC.png");
 	Sprite callingwindow;
 	Sprite callingwindow2;
+	Sprite DashCallWindow;
 	Sprite TrumpPhoto[4];
 	for (int i = 0; i < 4; i++)
 	{
 		TrumpPhoto[i].setTexture(TrumpPhotoT[i]);
 		TrumpPhoto[i].setPosition(800, 60);
 	}
+
+	DashCallWindowT.loadFromFile("CardsTextures/DashCallWindow.jpg");
+	DashCallWindow.setTexture(DashCallWindowT);
+	DashCallWindow.setPosition(0, 0);
+	
+	DashOrNot[0].normal.loadFromFile("CardsTextures/YesDash.jpg");
+	DashOrNot[1].normal.loadFromFile("CardsTextures/NoDash.jpg");
+
+
 
 	GameDesignSetUp(avatar1, Avatar1, avatar2, Avatar2, avatar3, Avatar3, SHDC, shdc, CallingWindow, callingwindow, callingwindow2, CallNumber, CallColor, Choice);
 
@@ -540,9 +552,8 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			}
 			StatusWriter.setString("");
 			vector < pair<int, string>> DeckOfCards = Deck.Cards();
-			//srand(time(0));
-			for(int i=0;i<55;i++)
-			random_shuffle(DeckOfCards.begin(), DeckOfCards.end());
+			srand(time(0));
+				random_shuffle(DeckOfCards.begin(), DeckOfCards.end());
 
 			Deck.Distribute(Players, DeckOfCards);
 			sort(Players[3].rbegin(), Players[3].rend());
@@ -681,11 +692,75 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			else
 			{
 				xc.stop();
-				mode = "UserCalling";
+				mode = "UserDashCall";
 			}
 
 		}
 
+		if (mode == "UserDashCall")
+		{
+			for (int i = 0; i < 2; i++)
+			{
+				DashOrNot[i].shape.setSize(Vector2f(150,50));
+				DashOrNot[i].shape.setPosition(175,(i*70)+150);
+				normalize(DashOrNot[i]);
+				RectButtonAssign2(DashOrNot[i]);
+			}
+
+			RenderWindow DashCallMenu(VideoMode(502,325), "Estimation", Style::Close );
+			DashCallWindow.setPosition(0, 0);
+			while (DashCallMenu.isOpen())
+			{
+
+				Event E;
+				while (DashCallMenu.pollEvent(E))
+				{
+					switch (E.type)
+					{
+					case Event::Closed:
+						DashCallMenu.close();
+						break;
+					default:
+						break;
+					}
+				}
+
+
+				for (int i = 0; i < 2; i++)
+				{
+					if (ibuttonAutoHover(DashOrNot[i], DashCallMenu))
+					{
+						if (i == 0)
+						{
+							dashcalls[3] = true;
+							UserBid.first = 0;
+							UserBid.second = "EClubs";
+							mode = "FinalCalling";
+							Bids.push_back(UserBid);
+							Trump = TrumpDes(Bids, Caller, UserBid);
+							DashCallMenu.close();
+						}
+						else
+						{
+							dashcalls[3] = false;
+							mode = "UserCalling";
+							DashCallMenu.close();
+						}
+					}
+				}
+
+
+
+
+				DashCallMenu.clear();
+				DashCallMenu.draw(DashCallWindow);
+				for (int i = 0; i < 2; i++)
+					DashCallMenu.draw(DashOrNot[i].shape);
+				DashCallMenu.display();
+
+			}
+
+		}
 		if (mode == "UserCalling")
 		{
 			RenderWindow CallingWindow1(VideoMode(502, 325), "Estimation", Style::Close | Style::Resize);
@@ -762,11 +837,6 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 							mode = "BeforeFinalCalling";
 							Bids.push_back(UserBid);
 							Trump = TrumpDes(Bids, Caller, UserBid);
-							//Hena Code el Sewar
-							//
-							//
-							//
-							//Hena Code el Sewar
 							if (maximum < UserBid.first)
 								maximum = UserBid.first;
 							CallingWindow1.close();
@@ -779,11 +849,6 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 							mode = "BeforeFinalCalling";
 							Bids.push_back(UserBid);
 							Trump = TrumpDes(Bids, Caller, UserBid);
-							//Hena Code el Sewar
-							//
-							//
-							//
-							//Hena Code el Sewar
 							if (maximum < UserBid.first)
 								maximum = UserBid.first;
 							CallingWindow1.close();
@@ -814,7 +879,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 				CallingWindow1.display();
 
 			}
-			
+
 		}
 
 		if (mode == "ScoreCalculation")
@@ -839,12 +904,12 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 					for (int b = Caller, v = 0; v < 4; v++) {
 						riskDa = 0; withDa = 0;
 						if (v == 0) {
-							Scores[b] += Ai.score(Calls[b], Lammat[b], false,dashcalls[b], true, false, status, winners, 4 - winners); b = (b + 1) % 4; continue;
+							Scores[b] += Ai.score(Calls[b], Lammat[b], false, dashcalls[b], true, false, status, winners, 4 - winners); b = (b + 1) % 4; continue;
 						}
 						if (Lammat[b] == Lammat[Caller]) { withDa = 1; }
-						if (v == 3 ) {
-							if(!dashcalls[b])
-							if (abs(13 - TotalLammat) >= 2) { riskDa = 1; }
+						if (v == 3) {
+							if (!dashcalls[b])
+								if (abs(13 - TotalLammat) >= 2) { riskDa = 1; }
 						}
 
 						Scores[b] += Ai.score(Calls[b], Lammat[b], riskDa, dashcalls[b], false, withDa, status, winners, 4 - winners);
@@ -878,12 +943,89 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			}
 			writing << endl;
 			writing.close();
-			if (roundsCounter == 18) { mode = "GameFinish"; }
+			if (roundsCounter == NumberOfRounds) { mode = "GameFinish"; }
 			else mode = "RoundSetup";
 
 		}
-		if (mode == "GameFinish") {
+		if (mode == "GameFinish")
+		{
 
+				vector<pair<int, int>> ranks(4);
+				for (int i = 0; i < 4; i++) {
+					ranks[i].second = Scores[i]; ranks[i].first = i;
+				}
+				for (int i = 0; i < 3; i++) {
+					for (int j = i + 1; j < 4; j++) {
+						if (ranks[i].second < ranks[j].second) {
+							pair<int, int> temp;
+							temp = ranks[i];
+							ranks[i] = ranks[j];
+							ranks[j] = temp;
+						}
+					}
+				}
+			RenderWindow RankingWindow(VideoMode(700,700), "Estimation", Style::Close);
+			
+			Sprite RankingBase;
+			Texture RankingBaseT;
+			RankingBaseT.loadFromFile("CardsTextures/Rankingwindow.jpg");
+			RankingBase.setTexture(RankingBaseT);
+			RankingBase.setPosition(0,0);
+
+			Text Ranks[4];
+			for (int i = 0; i < 4; i++)
+			{
+				Ranks[i].setPosition(250, (i*120)+200);
+				Ranks[i].setFont(font);
+				Ranks[i].Bold;
+				Ranks[i].setFillColor(Color::White);
+				Ranks[i].setCharacterSize(40);
+			}
+			for (int i = 0; i < 4; i++)
+			{
+				if (ranks[i].first == 0)
+				{
+					Ranks[i].setString("Conan   "+to_string(Scores[0]));
+				}
+				else if (ranks[i].first == 1)
+				{
+					Ranks[i].setString("GumBall   " + to_string(Scores[1]));
+				}
+				else if (ranks[i].first == 2)
+				{
+					Ranks[i].setString("Homer   " + to_string(Scores[2]));
+				}
+				else if (ranks[i].first == 3)
+				{
+					Ranks[i].setString( UserName+"   " + to_string(Scores[3]));
+				}
+			}
+
+			while (RankingWindow.isOpen())
+			{
+
+				Event E;
+				while (RankingWindow.pollEvent(E))
+				{
+					switch (E.type)
+					{
+					case Event::Closed:
+						RankingWindow.close();
+						mode = "";
+						window.close();
+						break;
+					default:
+						break;
+					}
+				}
+
+
+				
+				RankingWindow.draw(RankingBase);
+				for (int i = 0; i < 4; i++)
+					RankingWindow.draw(Ranks[i]);
+				RankingWindow.display();
+			}
 		}
 
 		if (mode == "BeforeFinalCalling")
@@ -926,6 +1068,8 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 				{
 					wasal = true;
 					cout << "wasal lel User Call , wel (gh) = " << gh << endl;
+					if (!dashcalls[3])
+					{
 					while (CallingWindow2.isOpen())
 					{
 						Event E;
@@ -1048,6 +1192,28 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 						CallingWindow2.draw(Choice[1].shape);
 
 						CallingWindow2.display();
+
+					}
+					}
+					else
+					{
+						TotalLammat += UserBid.first;
+						Calls[b] = UserBid.first;
+						if (gh != 3 && b == 3)
+						{
+							b = (b + 1) % 4;
+						}
+						else
+						{
+							(TotalLammat > 13) ? status = "Over" : status = "Under";
+							cout << "Status :" << status << endl;
+						}
+						if (Caller == 0) { mode = "Player0Turn"; inHand[0] = 1; InHand[0] = 1; }
+						else if (Caller == 1) { mode = "Player1Turn"; inHand[1] = 1; InHand[1] = 1; }
+						else if (Caller == 2) { mode = "Player2Turn"; inHand[2] = 1; InHand[2] = 1; }
+						else if (Caller == 3) { mode = "UserTurn"; inHand[3] = 1; InHand[3] = 1; }
+
+						currentCalls[3].setString(" / " + to_string(UserBid.first));
 
 					}
 					continue;
