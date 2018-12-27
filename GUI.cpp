@@ -374,8 +374,23 @@ string GUI::TrumpDes(vector<pair<int, string>> Bids, int &Caller, pair<int, stri
 			}
 		}
 	}
+	AiPlayer Ai;
+	int x=0, User=3;
+	
+	if (UserBid.second != "" && max.second!="")
+	{
+			x = Ai.switchString(max.second);
+		 User = Ai.switchString(UserBid.second);
+	}
+
+
 
 	if (UserBid.first > max.first)
+	{
+		Caller = 3;
+		max = UserBid;
+	}
+	else if(UserBid.first==max.first && User < x)
 	{
 		Caller = 3;
 		max = UserBid;
@@ -385,8 +400,47 @@ string GUI::TrumpDes(vector<pair<int, string>> Bids, int &Caller, pair<int, stri
 	return max.second;
 }
 
-void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interactiveButton Ai_0_Card[14], interactiveButton Ai_1_Card[14], interactiveButton Ai_2_Card[14], Sprite BackGround, Sprite CardsHolder, vector<pair<int, string >> &Bids, vector < vector < pair<int, string>>> Players, Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15], string UserName,int NumberOfRounds)
+void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interactiveButton Ai_0_Card[14], interactiveButton Ai_1_Card[14], interactiveButton Ai_2_Card[14], Sprite BackGround, Sprite CardsHolder, vector<pair<int, string >> &Bids, vector < vector < pair<int, string>>> Players, Texture Spades[15], Texture Hearts[15], Texture Diamonds[15], Texture Clubs[15])
 {
+
+	RenderWindow MainMenu(VideoMode(1000, 550), "Estimation", Style::Close | Style::Resize);
+	string mode = "MainMenu";
+	string UserName;
+	int NumberOfRounds;
+
+	Texture MainMenuBackgroundT;
+	MainMenuBackgroundT.loadFromFile("CardsTextures/MainMenu.jpg");
+	Sprite MainMenuBackground;
+	MainMenuBackground.setTexture(MainMenuBackgroundT);
+	MainMenuBackground.setPosition(0, 0);
+	interactiveButton GameMode[3];
+
+	GameMode[0].normal.loadFromFile("CardsTextures/MicroButton.jpg");
+	GameMode[1].normal.loadFromFile("CardsTextures/MiniButton.jpg");
+	GameMode[2].normal.loadFromFile("CardsTextures/FullButton.jpg");
+
+	for (int i = 0; i < 3; i++)
+	{
+		GameMode[i].shape.setSize(Vector2f(120, 120));
+		GameMode[i].shape.setPosition((i * 140) + 450, 270);
+		normalize(GameMode[i]);
+		RectButtonAssign2(GameMode[i]);
+	}
+	Font font2;
+	font2.loadFromFile("ObelixPro-cyr.ttf");
+	Text text2;
+	text2.setFont(font2);
+	text2.setPosition(450, 400);
+	text2.Bold;
+	text2.setCharacterSize(50);
+	text2.setFillColor(Color::White);
+
+	bool namewritten = false;
+	bool ModeChosen = false;
+	
+	
+	
+
 	bool dashcalls[4] = { 0,0,0,0 };
 	float AnimationSpeed = 1;
 	ifstream x;
@@ -395,7 +449,6 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 	AiPlayer Ai;
 	CardDeck Deck;
 	vector<bool> inHand(4), InHand(4);
-	//vector <pair<int, string>> CardsOnGround;
 	vector<vector<pair<int, int>>> Halemm(4);
 	int KolElLammat[4] = {};
 	memset(KolElLammat, 0, 4);
@@ -477,7 +530,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 	pair<int, string> wara2a;
 	Vector2f destination = Vector2f(1000, 550);
-	string mode = "RoundSetup";
+	
 	vector<pair <int, string>> OnGround;
 	float factorx = 60;
 	bool roundstarted = true;
@@ -513,7 +566,84 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 	xc.setBuffer(c);
 	xd.setBuffer(d);
 
+	if (mode == "MainMenu")
+	{
+		while (MainMenu.isOpen())
+		{
+			Event E;
+			while (MainMenu.pollEvent(E))
+			{
+				switch (E.type)
+				{
+				case Event::Closed:
+					MainMenu.close();
+					window.close();
+					break;
+				case Event::TextEntered:
+					if (!namewritten)
+					{
+						if ((E.text.unicode < 128 && UserName.size() < 14) || E.text.unicode == 8)
+						{
+							UserName = text2.getString();
+							if (E.text.unicode == 13 && UserName.size() != 0)
+							{
+								namewritten = true;
+							}
+							else if (E.text.unicode == 8)
+							{
+								if (UserName.size() > 0)UserName.resize(UserName.size() - 1);
+							}
+							else if (E.text.unicode != 13)
+							{
+								UserName += static_cast<char>(E.text.unicode);
 
+							}
+							text2.setString(UserName);
+							break;
+						}
+					}
+				default:
+					break;
+				}
+			}
+
+
+			for (int i = 0; i < 3; i++)
+			{
+				if (ibuttonAutoHover(GameMode[i], MainMenu) && namewritten)
+				{
+					if (i == 0)
+						NumberOfRounds = 5;
+					else if (i == 1)
+						NumberOfRounds = 10;
+					else
+						NumberOfRounds = 18;
+					ModeChosen = true;
+					MainMenu.close();
+					hang();
+				}
+			}
+
+
+
+			MainMenu.clear();
+			MainMenu.draw(MainMenuBackground);
+			MainMenu.draw(text2);
+			if (namewritten)
+			{
+				for (int i = 0; i < 3; i++)
+					MainMenu.draw(GameMode[i].shape);
+			}
+			MainMenu.display();
+
+		}
+		if (namewritten && ModeChosen)
+			mode = "RoundSetup";
+	
+	}
+
+	
+	
 	while (window.isOpen())
 	{
 		Event E;
@@ -559,15 +689,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			sort(Players[3].rbegin(), Players[3].rend());
 			sort(Players[3].rbegin(), Players[3].rend(), sortbysec);
 
-			for (int i = 0; i < 4; i++)
-			{
-				for (int j = 0; j < Players[i].size(); j++)
-				{
-					cout << Players[i][j].first << " " << Players[i][j].second << endl;
-				}
-				cout << endl;
-				cout << endl;
-			}
+			
 
 			for (int i = 0; i < 3; i++)
 			{
@@ -580,10 +702,6 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			UserBid.first = 0;
 			UserBid.second = "";
 
-			for (int i = 0; i < 3; i++)
-			{
-				cout << Bids[i].first << " " << Bids[i].second << endl;
-			}
 
 			Ai_0_CardsSetup(Players[0], Ai_0_Card, Spades, Hearts, Diamonds, Clubs);
 
@@ -648,9 +766,6 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			for (int i = 0; i < 13; i++)
 			{
 				Card[i].shape.setSize(Vector2f(75, 108));
-				//Ai_0_Card[i].shape.setSize(Vector2f(75, 108));
-				//Ai_1_Card[i].shape.setSize(Vector2f(75, 108));
-				//Ai_2_Card[i].shape.setSize(Vector2f(75, 108));
 			}
 			factorx = 60;
 			roundstarted = true;
@@ -764,7 +879,6 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 		if (mode == "UserCalling")
 		{
 			RenderWindow CallingWindow1(VideoMode(502, 325), "Estimation", Style::Close | Style::Resize);
-			//here
 			callingwindow.setPosition(0, 0);
 			text.setPosition(9, 53);
 			while (CallingWindow1.isOpen())
@@ -845,7 +959,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 						else
 						{
 							UserBid.first = 0;
-							UserBid.second = "0";
+							UserBid.second = "EClubs";
 							mode = "BeforeFinalCalling";
 							Bids.push_back(UserBid);
 							Trump = TrumpDes(Bids, Caller, UserBid);
@@ -853,7 +967,6 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 								maximum = UserBid.first;
 							CallingWindow1.close();
 							roundstarted = false;
-
 						}
 					}
 				}
@@ -972,6 +1085,14 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			RankingBase.setTexture(RankingBaseT);
 			RankingBase.setPosition(0,0);
 
+			interactiveButton PlayAgain;
+			PlayAgain.normal.loadFromFile("CardsTextures/PlayAgain.jpg");
+			PlayAgain.shape.setSize(Vector2f(190, 50));
+			normalize(PlayAgain);
+			PlayAgain.shape.setPosition(450,620 );
+			RectButtonAssign2(PlayAgain);
+
+
 			Text Ranks[4];
 			for (int i = 0; i < 4; i++)
 			{
@@ -1011,8 +1132,6 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 					{
 					case Event::Closed:
 						RankingWindow.close();
-						mode = "";
-						window.close();
 						break;
 					default:
 						break;
@@ -1020,8 +1139,24 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 				}
 
 
+				if (ibuttonAutoHover(PlayAgain, RankingWindow))
+				{
+				
+					mode = "RoundSetup";
+					RoundsCounter = 0;
+					for (int i = 0; i < 4; i++)
+					{
+						Scores[i] = 0;
+					}
+					ifstream x;
+					x.open("Scores.txt", ofstream::out | ofstream::trunc);
+					x.close();
+					break;
+				}
+				
 				
 				RankingWindow.draw(RankingBase);
+				RankingWindow.draw(PlayAgain.shape);
 				for (int i = 0; i < 4; i++)
 					RankingWindow.draw(Ranks[i]);
 				RankingWindow.display();
@@ -1060,14 +1195,13 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 			for (int gh = 0, b = Caller; gh < 4; gh++)
 			{
-				cout << "(GH) : " << gh << " " << "(B) :" << b << endl;
+				
 
 				int temp = 0;
 
-				if (b == 3 && !wasal)//User Final Call
+				if (b == 3 && !wasal)
 				{
 					wasal = true;
-					cout << "wasal lel User Call , wel (gh) = " << gh << endl;
 					if (!dashcalls[3])
 					{
 					while (CallingWindow2.isOpen())
@@ -1139,7 +1273,6 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 							else
 							{
 								(TotalLammat > 13) ? status = "Over" : status = "Under";
-								cout << "Status :" << status << endl;
 							}
 							CallingWindow2.close();
 							if (Caller == 0) { mode = "Player0Turn"; inHand[0] = 1; InHand[0] = 1; }
@@ -1206,7 +1339,6 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 						else
 						{
 							(TotalLammat > 13) ? status = "Over" : status = "Under";
-							cout << "Status :" << status << endl;
 						}
 						if (Caller == 0) { mode = "Player0Turn"; inHand[0] = 1; InHand[0] = 1; }
 						else if (Caller == 1) { mode = "Player1Turn"; inHand[1] = 1; InHand[1] = 1; }
@@ -1222,17 +1354,16 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 				if (gh == 3 && b != 3)
 				{
-					cout << "Wasal le a5er caller , wel (gh) =" << gh << endl;
 					temp = Ai.FinalCall(Trump, Players[b], -1, TotalLammat, Halemm[b]);
 					TotalLammat += temp;
 					Calls[b] = temp;
 
-					cout << "TEMP : " << temp << endl;
 
 					currentCalls[b].setString(" / " + to_string(temp));
 
 					(TotalLammat > 13) ? status = "Over" : status = "Under";
-					cout << "Status :" << status << endl;
+					
+
 
 
 					for (int i = 0; i < 4; i++)
@@ -1586,13 +1717,12 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 		if (mode == "Player0Turn" && inHand[0])
 		{
-			cout << "Player 0 , elMafrood Yelem :  " << Calls[0] << " Lammet : " << Lammat[0] << endl;
 			wara2a = Ai.CardDes(DecksOfCards[0], DecksOfCards[3], OnGround, Trump, Players[0], status, Lammat[0], Calls[0], Halemm[0]);
 			OnGround.push_back(wara2a);
 
 			GroundCards[OnGround.size() - 1].TypeAndValue.first = wara2a.second;
 			GroundCards[OnGround.size() - 1].TypeAndValue.second = wara2a.first;
-			cout << "Player 0 Hayel3ab : " << wara2a.first << " " << wara2a.second << endl;
+
 			for (int v = 0; v < 13; v++)
 			{
 				if (Ai_0_Card[v].TypeAndValue.first == wara2a.second && Ai_0_Card[v].TypeAndValue.second == wara2a.first)
@@ -1626,12 +1756,10 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 		if (mode == "Player1Turn" && inHand[1])
 		{
-			cout << "Player 1 , elMafrood Yelem :  " << Calls[1] << " Lammet : " << Lammat[1] << endl;
 			wara2a = Ai.CardDes(DecksOfCards[1], DecksOfCards[3], OnGround, Trump, Players[1], status, Lammat[1], Calls[1], Halemm[1]);
 			OnGround.push_back(wara2a);
 			GroundCards[OnGround.size() - 1].TypeAndValue.first = wara2a.second;
 			GroundCards[OnGround.size() - 1].TypeAndValue.second = wara2a.first;
-			cout << "Player 1 Hayel3ab : " << wara2a.first << " " << wara2a.second << endl;
 			for (int v = 0; v < 13; v++)
 			{
 				if (Ai_1_Card[v].TypeAndValue.first == wara2a.second && Ai_1_Card[v].TypeAndValue.second == wara2a.first)
@@ -1666,13 +1794,10 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 
 		if (mode == "Player2Turn" && inHand[2])
 		{
-			cout << "Player 2 , elMafrood Yelem :  " << Calls[2] << " Lammet : " << Lammat[2] << endl;
-
 			wara2a = Ai.CardDes(DecksOfCards[2], DecksOfCards[3], OnGround, Trump, Players[2], status, Lammat[2], Calls[2], Halemm[2]);
 			OnGround.push_back(wara2a);
 			GroundCards[OnGround.size() - 1].TypeAndValue.first = wara2a.second;
 			GroundCards[OnGround.size() - 1].TypeAndValue.second = wara2a.first;
-			cout << "Player 2 Hayel3ab : " << wara2a.first << " " << wara2a.second << endl;
 			for (int v = 0; v < 13; v++)
 			{
 				if (Ai_2_Card[v].TypeAndValue.first == wara2a.second && Ai_2_Card[v].TypeAndValue.second == wara2a.first)
@@ -1735,15 +1860,7 @@ void GUI::ProgramRun(RenderWindow &window, interactiveButton Card[14], interacti
 			}
 			OnGround.clear();
 
-			for (int i = 0; i < 3; i++)
-			{
-				for (int j = 0; j < Players[i].size(); j++)
-				{
-					cout << Players[i][j].first << " " << Players[i][j].second << endl;
-				}
-				cout << endl;
-				cout << endl;
-			}
+			
 
 		}
 
